@@ -84,6 +84,30 @@ ANTHROPIC_API_KEY="sk-ant-..."
 
 ---
 
+## Vercel-এ লাইভ করা
+
+রিপোতে nitro বসানো আছে, তাই Vercel নিজেই বুঝে নেবে — আলাদা বিল্ড সেটিং লাগবে না।
+
+১. [vercel.com/new](https://vercel.com/new) → **Hisab-Lenden** রিপোটা Import করুন
+২. **Environment Variables**-এ দুটো বসান (AI স্ক্যান চাইলে তৃতীয়টাও):
+
+   | নাম | কোথায় পাবেন |
+   | --- | --- |
+   | `VITE_SUPABASE_URL` | Supabase → Settings → API |
+   | `VITE_SUPABASE_PUBLISHABLE_KEY` | Supabase → Settings → API |
+   | `ANTHROPIC_API_KEY` | console.anthropic.com (ঐচ্ছিক) |
+
+৩. **Deploy** চাপুন
+
+Framework Preset বা Build Command হাতে বদলানোর দরকার নেই — nitro বিল্ডের সময়
+Vercel চিনে নিয়ে `.vercel/output/` বানায়, Vercel সেটাই সরাসরি চালায়।
+
+> ⚠️ `VITE_` দিয়ে শুরু হওয়া ভেরিয়েবল ব্রাউজারে চলে যায় — এটাই স্বাভাবিক, Supabase-এর
+> anon key জনসাধারণের জন্যই। কিন্তু `service_role` key কখনো `VITE_` দিয়ে দেবেন না।
+> `ANTHROPIC_API_KEY`-তে `VITE_` নেই, তাই সেটা সার্ভারেই থাকে।
+
+---
+
 ## গুরুত্বপূর্ণ নিয়ম
 
 ### বাকি — একটা নিয়ম মনে রাখতে হবে
@@ -159,7 +183,7 @@ TanStack Start (React ১৯) + Supabase (Postgres) + Tailwind ৪।
 ```sh
 npm run dev        # ডেভ সার্ভার
 npm run build      # প্রোডাকশন বিল্ড
-npm start          # বিল্ড করা অ্যাপ চালিয়ে দেখুন (vite preview)
+npm start          # বিল্ড করা সার্ভার চালান (.output/server/index.mjs)
 npm test           # ইউনিট টেস্ট
 npm run typecheck  # টাইপ পরীক্ষা
 npm run lint       # লিন্ট
