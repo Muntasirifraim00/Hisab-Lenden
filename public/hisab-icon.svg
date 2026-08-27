@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="হিসাব">
+  <rect width="512" height="512" rx="112" fill="#132a6b"/>
+  <rect x="96" y="112" width="320" height="288" rx="28" fill="none" stroke="#ffffff" stroke-width="30"/>
+  <path d="M168 112v288" stroke="#ffffff" stroke-width="30" stroke-linecap="round"/>
+  <path d="M232 196h136M232 256h136M232 316h84" stroke="#ffffff" stroke-width="26" stroke-linecap="round"/>
+</svg>

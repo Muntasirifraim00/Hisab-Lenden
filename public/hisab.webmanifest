@@ -1,0 +1,21 @@
+{
+  "name": "হিসাব — দোকানের খাতা ও গুদাম",
+  "short_name": "হিসাব",
+  "description": "দোকানের খাতা আর গুদাম এক জায়গায় — স্টক, লাভ, বাকি ও কিস্তির হিসাব।",
+  "lang": "bn",
+  "dir": "ltr",
+  "start_url": "/hisab",
+  "scope": "/hisab",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f8fafc",
+  "theme_color": "#132a6b",
+  "icons": [
+    {
+      "src": "/hisab-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

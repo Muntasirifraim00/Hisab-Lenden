@@ -1,0 +1,91 @@
+@import "tailwindcss" source(none);
+@source "../src";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * হিসাবের পাতাগুলো বেশিরভাগ জায়গায় সরাসরি Tailwind-এর রঙ (slate/blue/…) ব্যবহার
+ * করে। নিচের টোকেনগুলো শুধু সেই কম্পোনেন্টগুলোর জন্য যেগুলো shadcn ধাঁচের
+ * semantic নাম চায় — যেমন টোস্ট (sonner)।
+ */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --font-sans: "Noto Sans Bengali", "Hind Siliguri", system-ui, -apple-system, sans-serif;
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.21 0.03 264);
+  --muted: oklch(0.97 0.005 264);
+  --muted-foreground: oklch(0.55 0.02 264);
+  --border: oklch(0.92 0.01 264);
+  --primary: oklch(0.42 0.17 265);
+  --primary-foreground: oklch(0.98 0 0);
+}
+
+.dark {
+  --background: oklch(0.21 0.03 264);
+  --foreground: oklch(0.97 0.005 264);
+  --muted: oklch(0.28 0.03 264);
+  --muted-foreground: oklch(0.71 0.02 264);
+  --border: oklch(0.33 0.02 264);
+  --primary: oklch(0.62 0.17 265);
+  --primary-foreground: oklch(0.21 0.03 264);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --background: oklch(0.21 0.03 264);
+    --foreground: oklch(0.97 0.005 264);
+    --muted: oklch(0.28 0.03 264);
+    --muted-foreground: oklch(0.71 0.02 264);
+    --border: oklch(0.33 0.02 264);
+    --primary: oklch(0.62 0.17 265);
+    --primary-foreground: oklch(0.21 0.03 264);
+  }
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* বাংলা অঙ্ক তালিকায় সারিবদ্ধ রাখতে */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* সংখ্যার ঘরে ব্রাউজারের ছোট তীরগুলো লুকানো — ফোনে ভুল চাপ পড়ে */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* রিপোর্ট পাতা প্রিন্ট করলে শুধু হিসাবটাই ছাপা হবে */
+@media print {
+  body {
+    background: #fff;
+  }
+  header,
+  nav,
+  .print\:hidden {
+    display: none !important;
+  }
+}
