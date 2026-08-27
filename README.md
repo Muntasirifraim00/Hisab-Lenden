@@ -159,7 +159,7 @@ TanStack Start (React ১৯) + Supabase (Postgres) + Tailwind ৪।
 ```sh
 npm run dev        # ডেভ সার্ভার
 npm run build      # প্রোডাকশন বিল্ড
-npm start          # বিল্ড করা অ্যাপ চালান
+npm start          # বিল্ড করা অ্যাপ চালিয়ে দেখুন (vite preview)
 npm test           # ইউনিট টেস্ট
 npm run typecheck  # টাইপ পরীক্ষা
 npm run lint       # লিন্ট

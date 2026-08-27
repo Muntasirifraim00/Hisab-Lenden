@@ -7,7 +7,7 @@
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
-    "start": "node .output/server/index.mjs",
+    "start": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
     "test": "vitest run",
