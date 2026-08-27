@@ -28,8 +28,8 @@
 ### ১. কোড নামান
 
 ```sh
-git clone <this-repo-url>
-cd hisab-book
+git clone https://github.com/Muntasirifraim00/Hisab-Lenden.git
+cd Hisab-Lenden
 npm install
 ```
 
