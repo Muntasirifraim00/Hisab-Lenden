@@ -218,8 +218,12 @@ function Dashboard() {
         <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4">
           <StatCard
             label="আজকের বিক্রয়"
-            value={money(today.sales)}
-            sub={`${toBn(today.saleCount)} টি বিক্রয়`}
+            value={money(today.sales - today.returns)}
+            sub={
+              today.returns > 0
+                ? `${toBn(today.saleCount)} টি · ফেরত ${money(today.returns)}`
+                : `${toBn(today.saleCount)} টি বিক্রয়`
+            }
             tone="sky"
             icon={<ShoppingCart className="h-4 w-4" />}
           />
@@ -622,6 +626,7 @@ function Dashboard() {
 function sumUp(rows: Invoice[]) {
   const t = {
     sales: 0,
+    returns: 0,
     purchases: 0,
     expenses: 0,
     profit: 0,
@@ -631,6 +636,7 @@ function sumUp(rows: Invoice[]) {
     saleCount: 0,
     purchaseCount: 0,
     expenseCount: 0,
+    returnCount: 0,
   };
   for (const r of rows) {
     const amount = num(r.total_amount);
@@ -640,6 +646,13 @@ function sumUp(rows: Invoice[]) {
       t.cogs += num(r.cogs);
       t.receivable += num(r.due_amount);
       t.saleCount += 1;
+    } else if (r.type === "return") {
+      // ফেরতের লাভ ও ক্রয়মূল্য ডেটাবেসেই ঋণাত্মক, তাই সরাসরি যোগ করলেই নিট হয়
+      t.returns += amount;
+      t.profit += num(r.profit);
+      t.cogs += num(r.cogs);
+      t.payable += num(r.due_amount); // ক্রেতাকে টাকা ফেরত দিতে বাকি
+      t.returnCount += 1;
     } else if (r.type === "purchase") {
       t.purchases += amount;
       t.payable += num(r.due_amount);
@@ -660,7 +673,7 @@ function buildSeries(rows: Invoice[], days: number) {
     const t = sumUp(rows.filter((r) => r.invoice_date === iso));
     out.push({
       label: `${toBn(Number(iso.slice(8, 10)))}/${toBn(Number(iso.slice(5, 7)))}`,
-      sales: Math.round(t.sales),
+      sales: Math.round(t.sales - t.returns),
       expenses: Math.round(t.expenses),
       profit: Math.round(t.profit),
     });
@@ -686,7 +699,7 @@ function buildCashbook(rows: Invoice[]) {
     const entry = map.get(r.payment_method) ?? { method: r.payment_method, in: 0, out: 0, net: 0 };
     const cash = num(r.paid_amount);
     if (r.type === "sale") entry.in += cash;
-    else entry.out += cash;
+    else entry.out += cash; // ক্রয়, খরচ ও ফেরত — সবেতেই টাকা বেরোয়
     entry.net = entry.in - entry.out;
     map.set(r.payment_method, entry);
   }

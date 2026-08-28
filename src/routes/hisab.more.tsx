@@ -3,6 +3,7 @@ import {
   Activity,
   ChevronRight,
   FileBarChart,
+  FileText,
   FolderOpen,
   HelpCircle,
   LogOut,
@@ -18,6 +19,12 @@ export const Route = createFileRoute("/hisab/more")({
 });
 
 const LINKS = [
+  {
+    to: "/hisab/quotations",
+    label: "কোটেশন",
+    hint: "দামের প্রস্তাব — রাজি হলে এক চাপে বিক্রয়ে",
+    icon: FileText,
+  },
   {
     to: "/hisab/products",
     label: "পণ্য ও ক্যাটাগরি",

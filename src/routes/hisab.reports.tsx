@@ -43,6 +43,12 @@ function ReportsPage() {
         acc.profit += num(r.profit);
         acc.cogs += num(r.cogs);
         acc.receivable += num(r.due_amount);
+      } else if (r.type === "return") {
+        // ফেরতের লাভ/ক্রয়মূল্য ডেটাবেসেই ঋণাত্মক
+        acc.returns += amount;
+        acc.profit += num(r.profit);
+        acc.cogs += num(r.cogs);
+        acc.payable += num(r.due_amount);
       } else if (r.type === "purchase") {
         acc.purchases += amount;
         acc.payable += num(r.due_amount);
@@ -56,6 +62,7 @@ function ReportsPage() {
     },
     {
       sales: 0,
+      returns: 0,
       purchases: 0,
       expenses: 0,
       profit: 0,
@@ -165,7 +172,11 @@ function ReportsPage() {
               right={<span className="text-[11px] text-dim">{toBn(rows.length)} টি এন্ট্রি</span>}
             />
             <div className="grid grid-cols-2 gap-2.5">
-              <StatCard label="বিক্রয়" value={money(totals.sales)} tone="sky" />
+              <StatCard
+                label="নিট বিক্রয়"
+                value={money(totals.sales - totals.returns)}
+                tone="sky"
+              />
               <StatCard label="ক্রয়" value={money(totals.purchases)} tone="mint" />
               <StatCard label="খরচ" value={money(totals.expenses)} tone="amber" />
               <StatCard
@@ -178,6 +189,7 @@ function ReportsPage() {
 
             <div className="mt-3 space-y-1.5 rounded-xl bg-card-2 p-3 text-[13px]">
               <Line label="বিক্রয়" value={totals.sales} />
+              {totals.returns > 0 ? <Line label="ফেরত" value={-totals.returns} /> : null}
               <Line label="বিক্রীত মালের ক্রয়মূল্য (FIFO)" value={-totals.cogs} />
               <Line label="মোট লাভ" value={totals.profit} bold />
               <Line label="পরিচালন খরচ" value={-totals.expenses} />

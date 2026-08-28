@@ -7,7 +7,15 @@ import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   {
-    ignores: ["dist", ".output", ".nitro", ".tanstack", "src/routeTree.gen.ts", "vitest.config.ts"],
+    ignores: [
+      "dist",
+      ".output",
+      ".vercel",
+      ".nitro",
+      ".tanstack",
+      "src/routeTree.gen.ts",
+      "vitest.config.ts",
+    ],
   },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],

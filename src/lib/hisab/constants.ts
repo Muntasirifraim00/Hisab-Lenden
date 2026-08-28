@@ -20,10 +20,13 @@ export const emailForUser = (name: string) => `${name.toLowerCase()}@${AUTH_DOMA
 export const userColor = (name?: string | null) =>
   HISAB_USERS.find((u) => u.name === (name ?? "").toUpperCase())?.color ?? "#64748b";
 
-export type InvoiceType = "expense" | "purchase" | "sale";
+export type InvoiceType = "expense" | "purchase" | "sale" | "return";
+
+/** হাতে যে তিনটা লেখা যায় — ফেরত বিক্রয় খুলে নেওয়া হয়, তাই এখানে নেই */
+export type ManualInvoiceType = "expense" | "purchase" | "sale";
 
 export const INVOICE_TYPES: {
-  value: InvoiceType;
+  value: ManualInvoiceType;
   label: string;
   hint: string;
   color: string;
@@ -51,6 +54,33 @@ export const INVOICE_TYPES: {
     bg: "bg-blue-50 dark:bg-blue-950/30",
   },
 ];
+
+/** ফেরত ফর্মে হাতে লেখা হয় না — বিক্রয় খুলে নেওয়া হয়, তাই আলাদা রাখা */
+export const RETURN_TYPE = {
+  value: "return" as const,
+  label: "ফেরত",
+  hint: "ক্রেতা মাল ফেরত দিল — স্টকে ফেরে, লাভ কমে",
+  color: "#a855f7",
+};
+
+export const ALL_TYPES = [...INVOICE_TYPES, RETURN_TYPE];
+
+export type QuoteStatus = "draft" | "sent" | "accepted" | "rejected" | "expired" | "converted";
+
+export const QUOTE_STATUSES: { value: QuoteStatus; label: string; color: string }[] = [
+  { value: "draft", label: "খসড়া", color: "#94a3b8" },
+  { value: "sent", label: "পাঠানো হয়েছে", color: "#3b82f6" },
+  { value: "accepted", label: "গ্রহণ করেছে", color: "#10b981" },
+  { value: "rejected", label: "বাতিল করেছে", color: "#f43f5e" },
+  { value: "expired", label: "মেয়াদ শেষ", color: "#f59e0b" },
+  { value: "converted", label: "বিক্রয়ে নেওয়া হয়েছে", color: "#a855f7" },
+];
+
+export const quoteStatusLabel = (s: string) =>
+  QUOTE_STATUSES.find((x) => x.value === s)?.label ?? s;
+
+export const quoteStatusColor = (s: string) =>
+  QUOTE_STATUSES.find((x) => x.value === s)?.color ?? "#94a3b8";
 
 export const typeLabel = (t: string) => INVOICE_TYPES.find((x) => x.value === t)?.label ?? t;
 
@@ -105,4 +135,5 @@ export const STOCK_REASONS: Record<string, string> = {
   opening: "ওপেনিং স্টক",
   receipt: "মাল বুঝে পাওয়া",
   reversal: "বাতিল / সংশোধনী",
+  return: "ক্রেতা ফেরত",
 };

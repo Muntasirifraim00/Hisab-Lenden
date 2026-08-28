@@ -13,6 +13,7 @@ import {
   Plus,
   RotateCcw,
   Undo2,
+  RotateCw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -24,9 +25,12 @@ import {
   getInvoiceItems,
   getInvoicePayments,
   getInvoiceReceipts,
+  getReturnableItems,
+  getReturnsOf,
   getReversalOf,
   receiveGoods,
   reverseInvoice,
+  createReturn,
 } from "@/lib/hisab/api";
 import {
   GOODS_STATUS,
@@ -69,9 +73,9 @@ function InvoiceDetail() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [panel, setPanel] = React.useState<null | "payment" | "receive" | "details" | "reverse">(
-    null,
-  );
+  const [panel, setPanel] = React.useState<
+    null | "payment" | "receive" | "details" | "reverse" | "return"
+  >(null);
   const [error, setError] = React.useState<string | null>(null);
 
   const invoice = useQuery({ queryKey: ["hisab", "invoice", id], queryFn: () => getInvoice(id) });
@@ -95,6 +99,14 @@ function InvoiceDetail() {
     queryKey: ["hisab", "invoice", id, "edits"],
     queryFn: () => getDetailEdits(id),
   });
+  const returnable = useQuery({
+    queryKey: ["hisab", "invoice", id, "returnable"],
+    queryFn: () => getReturnableItems(id),
+  });
+  const returns = useQuery({
+    queryKey: ["hisab", "invoice", id, "returns"],
+    queryFn: () => getReturnsOf(id),
+  });
   const reversal = useQuery({
     queryKey: ["hisab", "invoice", id, "reversal"],
     queryFn: () => getReversalOf(id),
@@ -116,6 +128,10 @@ function InvoiceDetail() {
   const color = typeColor(inv.type);
   const cancelled = !!inv.reversed_at;
   const goodsPending = inv.goods_status === "pending" || inv.goods_status === "partial";
+  const returnableRows = (returnable.data ?? []).filter((r) => num(r.returnable_qty) > 0);
+  const canReturn =
+    inv.type === "sale" && !inv.is_reversal && !cancelled && returnableRows.length > 0;
+  const returnedTotal = (returns.data ?? []).reduce((s, r) => s + num(r.total_amount), 0);
 
   return (
     <div className="space-y-4">
@@ -205,6 +221,16 @@ function InvoiceDetail() {
           </Link>
         ) : null}
 
+        {inv.returns_invoice_id ? (
+          <Link
+            to="/hisab/invoice/$id"
+            params={{ id: inv.returns_invoice_id }}
+            className="mt-2 block text-[12px] font-semibold text-violet"
+          >
+            → যে বিক্রয়ের ফেরত সেটা দেখুন
+          </Link>
+        ) : null}
+
         {reversal.data ? (
           <Link
             to="/hisab/invoice/$id"
@@ -233,6 +259,12 @@ function InvoiceDetail() {
             মাল বুঝে পেয়েছি
           </Button>
         ) : null}
+        {canReturn ? (
+          <Button variant="outline" onClick={() => setPanel(panel === "return" ? null : "return")}>
+            <RotateCw className="h-4 w-4" />
+            মাল ফেরত নিন
+          </Button>
+        ) : null}
         <Button variant="outline" onClick={() => setPanel(panel === "details" ? null : "details")}>
           <Pencil className="h-4 w-4" />
           বিবরণ বদলান
@@ -259,6 +291,15 @@ function InvoiceDetail() {
         <ReceivePanel
           invoiceId={inv.id}
           items={items.data ?? []}
+          onDone={refreshAll}
+          onError={setError}
+        />
+      ) : null}
+      {panel === "return" ? (
+        <ReturnPanel
+          invoiceId={inv.id}
+          minDate={inv.invoice_date}
+          rows={returnableRows}
           onDone={refreshAll}
           onError={setError}
         />
@@ -414,6 +455,43 @@ function InvoiceDetail() {
                   </p>
                 </div>
               </div>
+            ))}
+          </div>
+        </Card>
+      ) : null}
+
+      {/* এই বিক্রয়ের ফেরত */}
+      {(returns.data ?? []).length ? (
+        <Card>
+          <SectionTitle
+            title="এই বিক্রয়ের ফেরত"
+            right={<Chip color="#a855f7">মোট {money(returnedTotal)}</Chip>}
+          />
+          <div className="divide-y divide-line">
+            {(returns.data ?? []).map((r) => (
+              <Link
+                key={r.id}
+                to="/hisab/invoice/$id"
+                params={{ id: r.id }}
+                className="flex items-center gap-3 py-2.5 transition hover:opacity-80"
+              >
+                <RotateCw className="h-4 w-4 shrink-0 text-violet" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-[13px] font-semibold text-ink">{bnDate(r.invoice_date)}</p>
+                  <p className="text-[11px] text-faint">
+                    {r.created_by_name}
+                    {r.details ? ` · ${r.details}` : ""}
+                  </p>
+                </div>
+                <div className="shrink-0 text-right">
+                  <p className="text-[13px] font-bold text-violet">{money(r.total_amount)}</p>
+                  {num(r.due_amount) > 0 ? (
+                    <p className="text-[10px] font-semibold text-rose">
+                      ফেরত দিতে বাকি {money(r.due_amount)}
+                    </p>
+                  ) : null}
+                </div>
+              </Link>
             ))}
           </div>
         </Card>
@@ -686,6 +764,189 @@ function DetailsPanel({
           <Pencil className="h-4 w-4" />
         )}
         সংরক্ষণ
+      </Button>
+    </Card>
+  );
+}
+
+/* ------------------------------ মাল ফেরত ------------------------------ */
+
+function ReturnPanel({
+  invoiceId,
+  minDate,
+  rows,
+  onDone,
+  onError,
+}: {
+  invoiceId: string;
+  minDate: string;
+  rows: {
+    item_id: string;
+    product_name: string;
+    unit: string;
+    sold_qty: number;
+    returned_qty: number;
+    returnable_qty: number;
+    unit_price: number;
+  }[];
+  onDone: () => void;
+  onError: (message: string) => void;
+}) {
+  const [qtys, setQtys] = React.useState<Record<string, string>>({});
+  const [date, setDate] = React.useState(todayISO());
+  const [reason, setReason] = React.useState("");
+  const [refunded, setRefunded] = React.useState("");
+  const [noRefund, setNoRefund] = React.useState(false);
+  const [method, setMethod] = React.useState("cash");
+
+  const value = rows.reduce((s, r) => s + num(qtys[r.item_id]) * num(r.unit_price), 0);
+  const refund = noRefund ? 0 : Math.min(num(refunded), value);
+  const owed = Math.max(0, value - refund);
+  const picked = rows.some((r) => num(qtys[r.item_id]) > 0);
+
+  const mutation = useMutation({
+    mutationFn: () =>
+      createReturn({
+        invoice_id: invoiceId,
+        invoice_date: date,
+        reason: reason.trim() || null,
+        refunded_amount: refund,
+        payment_method: method,
+        no_image_reason: "ফেরতের আলাদা মেমো নেই",
+        lines: rows
+          .map((r) => ({ item_id: r.item_id, qty: num(qtys[r.item_id]) }))
+          .filter((l) => l.qty > 0),
+      }),
+    onSuccess: () => {
+      toast.success("ফেরত লেখা হয়েছে — মাল স্টকে ফিরেছে।");
+      onDone();
+    },
+    onError: (e) => onError((e as Error).message),
+  });
+
+  return (
+    <Card className="space-y-3.5 border-violet/40">
+      <SectionTitle
+        title={
+          <span className="flex items-center gap-1.5 text-violet">
+            <RotateCw className="h-4 w-4" />
+            ক্রেতা মাল ফেরত দিল
+          </span>
+        }
+      />
+
+      <div className="rounded-xl bg-violet/10 px-3 py-2.5 text-[12px] leading-relaxed text-violet">
+        যতটুকু ফেরত নেবেন ততটুকুই স্টকে ফিরবে — আর যে ক্রয়মূল্যে মালটা বেরিয়েছিল, ঠিক সেই দামেই।
+        লাভও ততটুকু কমে যাবে। মূল বিক্রয়টা খাতায় অক্ষত থাকবে।
+      </div>
+
+      <div className="space-y-2.5">
+        {rows.map((r) => (
+          <div key={r.item_id} className="flex items-end gap-2">
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-[13px] font-semibold text-ink">{r.product_name}</p>
+              <p className="text-[11px] text-faint">
+                বিক্রি {qtyText(r.sold_qty)}
+                {num(r.returned_qty) > 0 ? ` · ফেরত এসেছে ${qtyText(r.returned_qty)}` : ""} · ফেরত
+                নেওয়া যাবে {qtyText(r.returnable_qty)} {unitLabel(r.unit)}
+              </p>
+            </div>
+            <Input
+              type="number"
+              inputMode="decimal"
+              min="0"
+              step="0.001"
+              max={r.returnable_qty}
+              value={qtys[r.item_id] ?? ""}
+              onChange={(e) => setQtys((q) => ({ ...q, [r.item_id]: e.target.value }))}
+              placeholder="০"
+              className="w-24"
+            />
+          </div>
+        ))}
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        <Field label="ফেরতের তারিখ" required>
+          <Input
+            type="date"
+            min={minDate}
+            max={todayISO()}
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+          />
+        </Field>
+        <Field label="কারণ">
+          <Input
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            placeholder="মাল খারাপ / ভুল পণ্য"
+          />
+        </Field>
+      </div>
+
+      <Field label="নগদে কত ফেরত দিলেন" hint="বাকিটা ক্রেতাকে দেনা হিসেবে থেকে যাবে">
+        <div className="flex gap-2">
+          <Input
+            type="number"
+            inputMode="decimal"
+            min="0"
+            step="0.01"
+            value={noRefund ? "" : refunded}
+            disabled={noRefund}
+            onChange={(e) => setRefunded(e.target.value)}
+            placeholder={String(Math.round(value * 100) / 100)}
+          />
+          <Button
+            variant={noRefund ? "danger" : "outline"}
+            onClick={() => {
+              setNoRefund((v) => !v);
+              setRefunded("");
+            }}
+          >
+            টাকা দেইনি
+          </Button>
+        </div>
+      </Field>
+
+      <Field label="মাধ্যম">
+        <Select value={method} onChange={(e) => setMethod(e.target.value)}>
+          {PAYMENT_METHODS.map((m) => (
+            <option key={m.value} value={m.value}>
+              {m.label}
+            </option>
+          ))}
+        </Select>
+      </Field>
+
+      <div className="grid grid-cols-3 gap-2 rounded-xl bg-card-2 p-3 text-center">
+        <div>
+          <p className="text-[10px] font-semibold text-faint">ফেরতের মূল্য</p>
+          <p className="text-[14px] font-bold text-ink">{money(value)}</p>
+        </div>
+        <div>
+          <p className="text-[10px] font-semibold text-faint">নগদে দিলেন</p>
+          <p className="text-[14px] font-bold text-mint">{money(refund)}</p>
+        </div>
+        <div>
+          <p className="text-[10px] font-semibold text-faint">দিতে বাকি</p>
+          <p className={cn("text-[14px] font-bold", owed > 0 ? "text-rose" : "text-dim")}>
+            {money(owed)}
+          </p>
+        </div>
+      </div>
+
+      <Button
+        onClick={() => mutation.mutate()}
+        className="w-full"
+        disabled={mutation.isPending || !picked}
+      >
+        {mutation.isPending ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : (
+          <RotateCw className="h-4 w-4" />
+        )}
+        ফেরত লিখুন
       </Button>
     </Card>
   );

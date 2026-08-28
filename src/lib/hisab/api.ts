@@ -17,6 +17,9 @@ import type {
   PartyRow,
   Product,
   ProductCategory,
+  Quotation,
+  QuotationItem,
+  ReturnableItem,
   StockMove,
   StockRow,
 } from "./types";
@@ -36,6 +39,7 @@ function translateError(message: string) {
   if (/invoices_memo_no_key/.test(message)) return "এই মেমো নম্বরে আগেই একটা হিসাব আছে।";
   if (/invoices_reverses_once_key/.test(message)) return "এই হিসাবটি আগেই সংশোধন করা হয়েছে।";
   if (/products_name_key/.test(message)) return "এই নামে পণ্য আগেই আছে।";
+  if (/quotations_no_key/.test(message)) return "এই নম্বরে একটা কোটেশন আগেই আছে।";
   if (/product_categories_name_key/.test(message)) return "এই নামে ক্যাটাগরি আগেই আছে।";
   if (/invoices_image_or_reason/.test(message)) return "ছবি না থাকলে কারণ লিখতে হবে।";
   if (/violates row-level security|permission denied/i.test(message))
@@ -193,6 +197,97 @@ export async function listTopProducts(from?: string, limit = 4) {
   }
 
   return [...map.values()].sort((a, b) => b.amount - a.amount).slice(0, limit);
+}
+
+/* ------------------------------ ফেরত ------------------------------ */
+
+/** এই বিক্রয়ের কোন সারি থেকে আর কতটা ফেরত নেওয়া যাবে */
+export async function getReturnableItems(invoiceId: string) {
+  return (
+    unwrap<ReturnableItem[]>(
+      await db.from("hb_returnable_items").select("*").eq("invoice_id", invoiceId),
+    ) ?? []
+  );
+}
+
+/** এই বিক্রয়ের বিপরীতে যত ফেরত হয়েছে */
+export async function getReturnsOf(invoiceId: string) {
+  return (
+    unwrap<Invoice[]>(
+      await db
+        .from("invoices")
+        .select("*")
+        .eq("returns_invoice_id", invoiceId)
+        .order("invoice_date", { ascending: false }),
+    ) ?? []
+  );
+}
+
+export async function createReturn(payload: {
+  invoice_id: string;
+  invoice_date: string;
+  reason?: string | null;
+  memo_no?: string | null;
+  refunded_amount: number;
+  payment_method: string;
+  image_url?: string | null;
+  no_image_reason?: string | null;
+  lines: { item_id: string; qty: number }[];
+}) {
+  return unwrap<Invoice>(await db.rpc("hb_create_return", { p: payload }));
+}
+
+/* ------------------------------ কোটেশন ------------------------------ */
+
+export async function listQuotations(status?: string) {
+  let q = db
+    .from("quotations")
+    .select("*")
+    .order("quote_date", { ascending: false })
+    .order("created_at", { ascending: false })
+    .limit(300);
+  if (status && status !== "all") q = q.eq("status", status);
+  return unwrap<Quotation[]>(await q) ?? [];
+}
+
+export async function getQuotation(id: string) {
+  return unwrap<Quotation>(await db.from("quotations").select("*").eq("id", id).single());
+}
+
+export async function getQuotationItems(quotationId: string) {
+  return (
+    unwrap<QuotationItem[]>(
+      await db
+        .from("quotation_items")
+        .select("*")
+        .eq("quotation_id", quotationId)
+        .order("sort_order"),
+    ) ?? []
+  );
+}
+
+export async function saveQuotation(payload: Record<string, unknown>) {
+  return unwrap<Quotation>(await db.rpc("hb_save_quotation", { p: payload }));
+}
+
+export async function setQuoteStatus(id: string, status: string) {
+  return unwrap<Quotation>(await db.rpc("hb_set_quote_status", { p: { id, status } }));
+}
+
+export async function deleteQuotation(id: string) {
+  return unwrap<boolean>(await db.rpc("hb_delete_quotation", { p_id: id }));
+}
+
+export async function convertQuotation(payload: {
+  id: string;
+  invoice_date: string;
+  paid_amount?: number | null;
+  nothing_paid?: boolean;
+  payment_method?: string;
+  memo_no?: string | null;
+  no_image_reason?: string | null;
+}) {
+  return unwrap<Invoice>(await db.rpc("hb_convert_quotation", { p: payload }));
 }
 
 /* ------------------------------ পণ্য ------------------------------ */

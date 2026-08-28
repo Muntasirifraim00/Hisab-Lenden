@@ -1,7 +1,7 @@
 import type { InvoiceType, PaymentMethod } from "./constants";
 
 export type GoodsStatus = "n_a" | "pending" | "partial" | "received";
-export type StockReason = "purchase" | "sale" | "opening" | "receipt" | "reversal";
+export type StockReason = "purchase" | "sale" | "opening" | "receipt" | "reversal" | "return";
 
 export type Invoice = {
   id: string;
@@ -22,6 +22,7 @@ export type Invoice = {
   goods_status: GoodsStatus;
   is_reversal: boolean;
   reverses_invoice_id: string | null;
+  returns_invoice_id: string | null;
   reversed_at: string | null;
   detail_revision: number;
   created_by: string | null;
@@ -41,6 +42,8 @@ export type InvoiceItem = {
   line_total: number;
   line_cogs: number;
   received_qty: number;
+  returned_qty: number;
+  source_item_id: string | null;
   created_at: string;
 };
 
@@ -134,6 +137,7 @@ export type PartyRow = {
   entry_count: number;
   total_sales: number;
   total_purchases: number;
+  total_returns: number;
   receivable: number;
   payable: number;
   last_entry_date: string;
@@ -172,4 +176,48 @@ export type InvoiceFilters = {
   maxAmount?: number | null;
   dueOnly?: boolean;
   pendingGoodsOnly?: boolean;
+};
+
+/* ------------------------------ কোটেশন ------------------------------ */
+
+export type Quotation = {
+  id: string;
+  quote_no: string | null;
+  quote_date: string;
+  valid_until: string | null;
+  party_name: string | null;
+  notes: string | null;
+  total_amount: number;
+  status: import("./constants").QuoteStatus;
+  converted_invoice_id: string | null;
+  created_by_name: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type QuotationItem = {
+  id: string;
+  quotation_id: string;
+  product_id: string | null;
+  product_name: string;
+  qty: number;
+  unit: string;
+  unit_price: number;
+  line_total: number;
+  sort_order: number;
+};
+
+/* ------------------------------ ফেরত ------------------------------ */
+
+export type ReturnableItem = {
+  item_id: string;
+  invoice_id: string;
+  product_id: string | null;
+  product_name: string;
+  unit: string;
+  sold_qty: number;
+  returned_qty: number;
+  returnable_qty: number;
+  unit_price: number;
+  unit_cost: number;
 };

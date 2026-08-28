@@ -21,6 +21,7 @@ import { Route as HisabMoreRouteImport } from './routes/hisab.more'
 import { Route as HisabNewRouteImport } from './routes/hisab.new'
 import { Route as HisabPartiesRouteImport } from './routes/hisab.parties'
 import { Route as HisabProductsRouteImport } from './routes/hisab.products'
+import { Route as HisabQuotationsRouteImport } from './routes/hisab.quotations'
 import { Route as HisabReportsRouteImport } from './routes/hisab.reports'
 import { Route as HisabStockRouteImport } from './routes/hisab.stock'
 import { Route as ApiHisabScanRouteImport } from './routes/api/hisab/scan'
@@ -86,6 +87,11 @@ const HisabProductsRoute = HisabProductsRouteImport.update({
   path: '/products',
   getParentRoute: () => HisabRoute,
 } as any)
+const HisabQuotationsRoute = HisabQuotationsRouteImport.update({
+  id: '/quotations',
+  path: '/quotations',
+  getParentRoute: () => HisabRoute,
+} as any)
 const HisabReportsRoute = HisabReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
@@ -119,6 +125,7 @@ export interface FileRoutesByFullPath {
   '/hisab/new': typeof HisabNewRoute
   '/hisab/parties': typeof HisabPartiesRoute
   '/hisab/products': typeof HisabProductsRoute
+  '/hisab/quotations': typeof HisabQuotationsRoute
   '/hisab/reports': typeof HisabReportsRoute
   '/hisab/stock': typeof HisabStockRoute
   '/hisab/': typeof HisabIndexRoute
@@ -136,6 +143,7 @@ export interface FileRoutesByTo {
   '/hisab/new': typeof HisabNewRoute
   '/hisab/parties': typeof HisabPartiesRoute
   '/hisab/products': typeof HisabProductsRoute
+  '/hisab/quotations': typeof HisabQuotationsRoute
   '/hisab/reports': typeof HisabReportsRoute
   '/hisab/stock': typeof HisabStockRoute
   '/hisab': typeof HisabIndexRoute
@@ -155,6 +163,7 @@ export interface FileRoutesById {
   '/hisab/new': typeof HisabNewRoute
   '/hisab/parties': typeof HisabPartiesRoute
   '/hisab/products': typeof HisabProductsRoute
+  '/hisab/quotations': typeof HisabQuotationsRoute
   '/hisab/reports': typeof HisabReportsRoute
   '/hisab/stock': typeof HisabStockRoute
   '/hisab/': typeof HisabIndexRoute
@@ -175,6 +184,7 @@ export interface FileRouteTypes {
     | '/hisab/new'
     | '/hisab/parties'
     | '/hisab/products'
+    | '/hisab/quotations'
     | '/hisab/reports'
     | '/hisab/stock'
     | '/hisab/'
@@ -192,6 +202,7 @@ export interface FileRouteTypes {
     | '/hisab/new'
     | '/hisab/parties'
     | '/hisab/products'
+    | '/hisab/quotations'
     | '/hisab/reports'
     | '/hisab/stock'
     | '/hisab'
@@ -210,6 +221,7 @@ export interface FileRouteTypes {
     | '/hisab/new'
     | '/hisab/parties'
     | '/hisab/products'
+    | '/hisab/quotations'
     | '/hisab/reports'
     | '/hisab/stock'
     | '/hisab/'
@@ -309,6 +321,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HisabProductsRouteImport
       parentRoute: typeof HisabRoute
     }
+    '/hisab/quotations': {
+      id: '/hisab/quotations'
+      path: '/quotations'
+      fullPath: '/hisab/quotations'
+      preLoaderRoute: typeof HisabQuotationsRouteImport
+      parentRoute: typeof HisabRoute
+    }
     '/hisab/reports': {
       id: '/hisab/reports'
       path: '/reports'
@@ -350,6 +369,7 @@ interface HisabRouteChildren {
   HisabNewRoute: typeof HisabNewRoute
   HisabPartiesRoute: typeof HisabPartiesRoute
   HisabProductsRoute: typeof HisabProductsRoute
+  HisabQuotationsRoute: typeof HisabQuotationsRoute
   HisabReportsRoute: typeof HisabReportsRoute
   HisabStockRoute: typeof HisabStockRoute
   HisabIndexRoute: typeof HisabIndexRoute
@@ -366,6 +386,7 @@ const HisabRouteChildren: HisabRouteChildren = {
   HisabNewRoute: HisabNewRoute,
   HisabPartiesRoute: HisabPartiesRoute,
   HisabProductsRoute: HisabProductsRoute,
+  HisabQuotationsRoute: HisabQuotationsRoute,
   HisabReportsRoute: HisabReportsRoute,
   HisabStockRoute: HisabStockRoute,
   HisabIndexRoute: HisabIndexRoute,

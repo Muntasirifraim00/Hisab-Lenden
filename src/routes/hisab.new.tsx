@@ -19,7 +19,7 @@ import {
   EXPENSE_HEADS,
   INVOICE_TYPES,
   PAYMENT_METHODS,
-  type InvoiceType,
+  type ManualInvoiceType,
   type PaymentMethod,
 } from "@/lib/hisab/constants";
 import { money, num, todayISO } from "@/lib/hisab/format";
@@ -38,9 +38,9 @@ import {
 } from "@/components/hisab/ui";
 
 export const Route = createFileRoute("/hisab/new")({
-  validateSearch: (search: Record<string, unknown>): { type?: InvoiceType } =>
-    (["expense", "purchase", "sale"] as const).includes(search.type as InvoiceType)
-      ? { type: search.type as InvoiceType }
+  validateSearch: (search: Record<string, unknown>): { type?: ManualInvoiceType } =>
+    (["expense", "purchase", "sale"] as const).includes(search.type as ManualInvoiceType)
+      ? { type: search.type as ManualInvoiceType }
       : {},
   component: NewEntry,
 });
@@ -55,7 +55,7 @@ type ItemRow = {
 type ExpenseRow = { key: string; head: string; amount: string; note: string };
 
 type FormState = {
-  type: InvoiceType;
+  type: ManualInvoiceType;
   invoice_date: string;
   memo_no: string;
   party_name: string;
@@ -87,7 +87,7 @@ const blankExpense = (): ExpenseRow => ({
   note: "",
 });
 
-function initialState(type: InvoiceType): FormState {
+function initialState(type: ManualInvoiceType): FormState {
   return {
     type,
     invoice_date: todayISO(),
@@ -369,10 +369,16 @@ function NewEntry() {
                 type="button"
                 onClick={() => patch({ type: t.value })}
                 className={cn(
-                  "rounded-xl border-2 px-2 py-2.5 text-center transition",
-                  active ? "text-white" : "border-line bg-card text-ink",
+                  "rounded-xl border px-2 py-2.5 text-center transition",
+                  active
+                    ? "border-transparent text-white shadow-lg"
+                    : "border-line bg-card-2 text-dim hover:text-ink",
                 )}
-                style={active ? { backgroundColor: t.color, borderColor: t.color } : undefined}
+                style={
+                  active
+                    ? { backgroundColor: t.color, boxShadow: `0 8px 24px -8px ${t.color}` }
+                    : undefined
+                }
               >
                 <span className="block text-[14px] font-bold">{t.label}</span>
                 <span

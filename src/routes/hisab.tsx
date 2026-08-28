@@ -6,6 +6,7 @@ import {
   Boxes,
   ChevronRight,
   FileBarChart,
+  FileText,
   FolderOpen,
   HelpCircle,
   LayoutDashboard,
@@ -67,6 +68,7 @@ const NAV_GROUPS: { label: string; dot: string; items: NavItem[] }[] = [
     items: [
       { to: "/hisab", label: "ড্যাশবোর্ড", icon: LayoutDashboard, tone: "sky", exact: true },
       { to: "/hisab/list", label: "সব হিসাব", icon: ListChecks, tone: "violet" },
+      { to: "/hisab/quotations", label: "কোটেশন", icon: FileText, tone: "amber" },
       { to: "/hisab/activity", label: "কার্যক্রম", icon: Activity, tone: "teal" },
     ],
   },
@@ -108,6 +110,7 @@ const isActive = (pathname: string, item: NavItem) =>
 /** ঠিকানা → পাতার শিরোনাম */
 const TITLES: [string, string][] = [
   ["/hisab/list", "সব হিসাব"],
+  ["/hisab/quotations", "কোটেশন"],
   ["/hisab/new", "নতুন হিসাব"],
   ["/hisab/invoice", "হিসাবের বিস্তারিত"],
   ["/hisab/stock", "স্টক"],
@@ -308,6 +311,7 @@ const QUICK_ADD: {
   { to: "/hisab/new", search: { type: "purchase" }, label: "ক্রয়", icon: Package, tone: "mint" },
   { to: "/hisab/new", search: { type: "expense" }, label: "খরচ", icon: Receipt, tone: "amber" },
   { to: "/hisab/products", label: "নতুন পণ্য", icon: Boxes, tone: "violet" },
+  { to: "/hisab/quotations", label: "কোটেশন", icon: FileText, tone: "amber" },
   { to: "/hisab/parties", label: "বাকির খাতা", icon: Wallet, tone: "rose" },
 ];
 

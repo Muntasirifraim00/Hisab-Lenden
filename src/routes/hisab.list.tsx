@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Filter, Search, SlidersHorizontal, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { listInvoices } from "@/lib/hisab/api";
-import { INVOICE_TYPES, typeColor, typeLabel, GOODS_STATUS } from "@/lib/hisab/constants";
+import { ALL_TYPES, typeColor, typeLabel, GOODS_STATUS } from "@/lib/hisab/constants";
 import { bnDate, money, num, toBn } from "@/lib/hisab/format";
 import { Button, Card, Chip, Empty, Field, Input, Loading } from "@/components/hisab/ui";
 import type { InvoiceFilters, Invoice } from "@/lib/hisab/types";
@@ -96,7 +96,7 @@ function ListPage() {
               active={filters.type === "all"}
               onClick={() => setFilters((f) => ({ ...f, type: "all" }))}
             />
-            {INVOICE_TYPES.map((t) => (
+            {ALL_TYPES.map((t) => (
               <TypeChip
                 key={t.value}
                 label={t.label}
