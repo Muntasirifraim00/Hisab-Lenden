@@ -121,7 +121,7 @@ function InvoiceDetail() {
     <div className="space-y-4">
       <button
         onClick={() => navigate({ to: "/hisab/list" })}
-        className="flex items-center gap-1.5 text-[13px] font-semibold text-slate-600 dark:text-slate-300"
+        className="flex items-center gap-1.5 text-[13px] font-semibold text-dim"
       >
         <ArrowLeft className="h-4 w-4" />
         তালিকায় ফিরুন
@@ -141,48 +141,48 @@ function InvoiceDetail() {
           {inv.stock_shortfall ? <Chip color="#dc2626">স্টকে পর্যাপ্ত মাল ছিল না</Chip> : null}
         </div>
 
-        <h1 className="mt-2 text-xl font-black tracking-tight text-slate-900 dark:text-slate-100">
+        <h1 className="mt-2 text-xl font-black tracking-tight text-ink">
           {money(inv.total_amount)}
         </h1>
-        <p className="mt-0.5 text-[13px] text-slate-600 dark:text-slate-400">
+        <p className="mt-0.5 text-[13px] text-dim">
           {inv.party_name || "পার্টির নাম নেই"} · {bnDate(inv.invoice_date)}
           {inv.memo_no ? ` · মেমো ${inv.memo_no}` : ""}
         </p>
 
-        <div className="mt-3 grid grid-cols-3 gap-2 rounded-xl bg-slate-50 p-3 text-center dark:bg-slate-800/60">
+        <div className="mt-3 grid grid-cols-3 gap-2 rounded-xl bg-card-2 p-3 text-center">
           <div>
-            <p className="text-[10px] font-semibold text-slate-500">পরিশোধ</p>
-            <p className="text-[14px] font-bold text-emerald-600">{money(inv.paid_amount)}</p>
+            <p className="text-[10px] font-semibold text-dim">পরিশোধ</p>
+            <p className="text-[14px] font-bold text-mint">{money(inv.paid_amount)}</p>
           </div>
           <div>
-            <p className="text-[10px] font-semibold text-slate-500">বাকি</p>
+            <p className="text-[10px] font-semibold text-dim">বাকি</p>
             <p
               className={cn(
                 "text-[14px] font-bold",
-                num(inv.due_amount) > 0 ? "text-rose-600" : "text-slate-500",
+                num(inv.due_amount) > 0 ? "text-rose" : "text-dim",
               )}
             >
               {money(inv.due_amount)}
             </p>
           </div>
           <div>
-            <p className="text-[10px] font-semibold text-slate-500">
+            <p className="text-[10px] font-semibold text-dim">
               {inv.type === "sale" ? "লাভ" : "মাধ্যম"}
             </p>
-            <p className="text-[14px] font-bold text-violet-600">
+            <p className="text-[14px] font-bold text-violet">
               {inv.type === "sale" ? money(inv.profit) : methodLabel(inv.payment_method)}
             </p>
           </div>
         </div>
 
         {inv.type === "sale" && !inv.is_reversal ? (
-          <p className="mt-2 text-center text-[11px] text-slate-500">
+          <p className="mt-2 text-center text-[11px] text-dim">
             বিক্রয় {money(inv.total_amount)} − FIFO ক্রয়মূল্য {money(inv.cogs)} = লাভ{" "}
             {money(inv.profit)}
           </p>
         ) : null}
 
-        <div className="mt-3 flex items-center gap-2 text-[11px] text-slate-500">
+        <div className="mt-3 flex items-center gap-2 text-[11px] text-dim">
           <Avatar name={inv.created_by_name} size={22} />
           <span>
             {inv.created_by_name} যোগ করেছেন · {bnDateTime(inv.created_at)}
@@ -190,7 +190,7 @@ function InvoiceDetail() {
         </div>
 
         {goodsPending ? (
-          <p className="mt-2 rounded-lg bg-orange-50 px-3 py-2 text-[12px] text-orange-800 dark:bg-orange-950/40 dark:text-orange-300">
+          <p className="mt-2 rounded-lg bg-amber/10 px-3 py-2 text-[12px] text-amber">
             টাকা দেওয়া হয়েছে, মাল এখনো পুরো আসেনি — {toBn(daysBetween(inv.invoice_date))} দিন হলো।
           </p>
         ) : null}
@@ -199,7 +199,7 @@ function InvoiceDetail() {
           <Link
             to="/hisab/invoice/$id"
             params={{ id: inv.reverses_invoice_id }}
-            className="mt-2 block text-[12px] font-semibold text-blue-700 dark:text-blue-400"
+            className="mt-2 block text-[12px] font-semibold text-brand"
           >
             → যে এন্ট্রিটা সংশোধন করা হয়েছে সেটা দেখুন
           </Link>
@@ -209,7 +209,7 @@ function InvoiceDetail() {
           <Link
             to="/hisab/invoice/$id"
             params={{ id: reversal.data.id }}
-            className="mt-2 block text-[12px] font-semibold text-rose-700 dark:text-rose-400"
+            className="mt-2 block text-[12px] font-semibold text-rose"
           >
             → এই এন্ট্রির সংশোধনীটা দেখুন
           </Link>
@@ -286,9 +286,7 @@ function InvoiceDetail() {
               ) : null
             }
           />
-          <p className="whitespace-pre-wrap text-[14px] leading-relaxed text-slate-700 dark:text-slate-300">
-            {inv.details}
-          </p>
+          <p className="whitespace-pre-wrap text-[14px] leading-relaxed text-ink">{inv.details}</p>
         </Card>
       ) : null}
 
@@ -300,11 +298,11 @@ function InvoiceDetail() {
             <img
               src={inv.image_url}
               alt="মেমো"
-              className="max-h-96 w-full rounded-xl border border-slate-200 bg-slate-50 object-contain dark:border-slate-800 dark:bg-slate-950"
+              className="max-h-96 w-full rounded-xl border border-line bg-card-2 object-contain"
             />
           </a>
         ) : (
-          <p className="rounded-xl bg-amber-50 px-3 py-3 text-[13px] text-amber-900 dark:bg-amber-950/40 dark:text-amber-300">
+          <p className="rounded-xl bg-amber/10 px-3 py-3 text-[13px] text-amber">
             ছবি নেই — কারণ: {inv.no_image_reason}
           </p>
         )}
@@ -314,27 +312,23 @@ function InvoiceDetail() {
       {(items.data ?? []).length ? (
         <Card>
           <SectionTitle title="পণ্যের সারি" />
-          <div className="divide-y divide-slate-100 dark:divide-slate-800">
+          <div className="divide-y divide-line">
             {(items.data ?? []).map((it) => (
               <div key={it.id} className="flex items-center gap-3 py-2.5">
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-[13px] font-semibold text-slate-800 dark:text-slate-200">
+                  <p className="truncate text-[13px] font-semibold text-ink">
                     {it.product_name}
                     {!it.product_id ? (
-                      <span className="ml-1.5 text-[10px] font-normal text-slate-400">
-                        (স্টকে নেই)
-                      </span>
+                      <span className="ml-1.5 text-[10px] font-normal text-faint">(স্টকে নেই)</span>
                     ) : null}
                   </p>
-                  <p className="text-[11px] text-slate-500">
+                  <p className="text-[11px] text-dim">
                     {qtyText(it.qty)} {unitLabel(it.unit)} × {money(it.unit_price)}
                     {inv.type === "purchase" && it.product_id ? (
                       <span
                         className={cn(
                           "ml-1.5",
-                          num(it.received_qty) >= num(it.qty)
-                            ? "text-emerald-600"
-                            : "text-orange-600",
+                          num(it.received_qty) >= num(it.qty) ? "text-mint" : "text-amber",
                         )}
                       >
                         · বুঝে পেয়েছি {qtyText(it.received_qty)}
@@ -345,7 +339,7 @@ function InvoiceDetail() {
                 <div className="text-right">
                   <p className="text-[13px] font-bold">{money(it.line_total)}</p>
                   {inv.type === "sale" ? (
-                    <p className="text-[10px] text-slate-500">ক্রয়মূল্য {money(it.line_cogs)}</p>
+                    <p className="text-[10px] text-dim">ক্রয়মূল্য {money(it.line_cogs)}</p>
                   ) : null}
                 </div>
               </div>
@@ -358,13 +352,13 @@ function InvoiceDetail() {
       {(expenses.data ?? []).length ? (
         <Card>
           <SectionTitle title="খরচের খাত" />
-          <div className="divide-y divide-slate-100 dark:divide-slate-800">
+          <div className="divide-y divide-line">
             {(expenses.data ?? []).map((ex) => (
               <div key={ex.id} className="flex items-center justify-between py-2 text-[13px]">
-                <span className="text-slate-700 dark:text-slate-300">
+                <span className="text-ink">
                   {ex.head}
                   {ex.note ? (
-                    <span className="ml-1.5 text-[11px] text-slate-400">{ex.note}</span>
+                    <span className="ml-1.5 text-[11px] text-faint">{ex.note}</span>
                   ) : null}
                 </span>
                 <span className="font-bold">{money(ex.amount)}</span>
@@ -385,15 +379,15 @@ function InvoiceDetail() {
               </Chip>
             }
           />
-          <div className="divide-y divide-slate-100 dark:divide-slate-800">
+          <div className="divide-y divide-line">
             {(payments.data ?? []).map((p) => (
               <div key={p.id} className="flex items-center gap-3 py-2.5">
                 <Avatar name={p.created_by_name} size={26} />
                 <div className="min-w-0 flex-1">
-                  <p className="text-[13px] font-semibold text-slate-800 dark:text-slate-200">
+                  <p className="text-[13px] font-semibold text-ink">
                     {money(p.amount)} · {methodLabel(p.method)}
                   </p>
-                  <p className="text-[11px] text-slate-500">
+                  <p className="text-[11px] text-dim">
                     {bnDate(p.paid_on)} · {p.created_by_name}
                     {p.note ? ` · ${p.note}` : ""}
                   </p>
@@ -408,15 +402,13 @@ function InvoiceDetail() {
       {(receipts.data ?? []).length ? (
         <Card>
           <SectionTitle title="মাল বুঝে পাওয়ার রসিদ" />
-          <div className="divide-y divide-slate-100 dark:divide-slate-800">
+          <div className="divide-y divide-line">
             {(receipts.data ?? []).map((r) => (
               <div key={r.id} className="flex items-center gap-3 py-2.5">
-                <ClipboardCheck className="h-4 w-4 shrink-0 text-emerald-600" />
+                <ClipboardCheck className="h-4 w-4 shrink-0 text-mint" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-[13px] font-semibold text-slate-800 dark:text-slate-200">
-                    {bnDate(r.received_on)}
-                  </p>
-                  <p className="text-[11px] text-slate-500">
+                  <p className="text-[13px] font-semibold text-ink">{bnDate(r.received_on)}</p>
+                  <p className="text-[11px] text-dim">
                     {r.created_by_name}
                     {r.note ? ` · ${r.note}` : ""}
                   </p>
@@ -440,26 +432,19 @@ function InvoiceDetail() {
           />
           <div className="space-y-2.5">
             {(edits.data ?? []).map((e) => (
-              <div
-                key={e.id}
-                className="rounded-xl bg-slate-50 p-3 text-[12px] dark:bg-slate-800/60"
-              >
-                <p className="font-bold text-slate-700 dark:text-slate-300">
+              <div key={e.id} className="rounded-xl bg-card-2 p-3 text-[12px]">
+                <p className="font-bold text-ink">
                   {toBn(e.revision_no)} নং সংশোধন · {e.edited_by_name} · {bnDateTime(e.created_at)}
                 </p>
-                <p className="mt-1.5 text-rose-700 line-through dark:text-rose-400">
-                  {e.old_details || "(খালি ছিল)"}
-                </p>
-                <p className="mt-0.5 text-emerald-700 dark:text-emerald-400">
-                  {e.new_details || "(খালি করা হয়েছে)"}
-                </p>
+                <p className="mt-1.5 text-rose line-through">{e.old_details || "(খালি ছিল)"}</p>
+                <p className="mt-0.5 text-mint">{e.new_details || "(খালি করা হয়েছে)"}</p>
               </div>
             ))}
           </div>
         </Card>
       ) : null}
 
-      <p className="pb-2 text-center text-[11px] leading-relaxed text-slate-500">
+      <p className="pb-2 text-center text-[11px] leading-relaxed text-dim">
         <Lock className="mr-1 inline h-3 w-3" />
         এই এন্ট্রি মোছা যায় না, টাকা-তারিখ বদলানো যায় না। ভুল হলে সংশোধনী দিন — মূল এন্ট্রি খাতায়
         থেকে যাবে, প্রমাণ হিসেবে।
@@ -503,10 +488,10 @@ function PaymentPanel({
   });
 
   return (
-    <Card className="space-y-3 border-emerald-300 dark:border-emerald-900">
+    <Card className="space-y-3 border-mint/40">
       <SectionTitle
         title="কিস্তি যোগ করুন"
-        right={<span className="text-[11px] text-slate-500">বাকি {money(due)}</span>}
+        right={<span className="text-[11px] text-dim">বাকি {money(due)}</span>}
       />
       <div className="grid grid-cols-2 gap-3">
         <Field label="অঙ্ক" required>
@@ -540,7 +525,7 @@ function PaymentPanel({
       <Field label="নোট">
         <Input value={note} onChange={(e) => setNote(e.target.value)} placeholder="ঐচ্ছিক" />
       </Field>
-      <p className="text-[11px] text-slate-500">
+      <p className="text-[11px] text-dim">
         কিস্তি একবার লিখলে মোছা বা বদলানো যায় না। কে নিল, কবে নিল — সব লেখা থাকবে।
       </p>
       <Button
@@ -594,20 +579,18 @@ function ReceivePanel({
   });
 
   return (
-    <Card className="space-y-3 border-blue-300 dark:border-blue-900">
+    <Card className="space-y-3 border-sky/40">
       <SectionTitle title="মাল বুঝে পেয়েছি" />
       {pending.length === 0 ? (
-        <p className="text-[13px] text-slate-500">সব মাল আগেই বুঝে পাওয়া হয়েছে।</p>
+        <p className="text-[13px] text-dim">সব মাল আগেই বুঝে পাওয়া হয়েছে।</p>
       ) : (
         <>
           <div className="space-y-2.5">
             {pending.map((it) => (
               <div key={it.id} className="flex items-end gap-2">
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-[13px] font-semibold text-slate-800 dark:text-slate-200">
-                    {it.product_name}
-                  </p>
-                  <p className="text-[11px] text-slate-500">
+                  <p className="truncate text-[13px] font-semibold text-ink">{it.product_name}</p>
+                  <p className="text-[11px] text-dim">
                     বাকি {qtyText(num(it.qty) - num(it.received_qty))} {unitLabel(it.unit)}
                   </p>
                 </div>
@@ -639,7 +622,7 @@ function ReceivePanel({
             </Field>
           </div>
 
-          <p className="text-[11px] text-slate-500">
+          <p className="text-[11px] text-dim">
             একই রসিদ ভুলে দুবার দিলেও স্টক দুবার বাড়বে না — বাকি পরিমাণের বেশি ঢুকবে না।
           </p>
 
@@ -689,7 +672,7 @@ function DetailsPanel({
     <Card className="space-y-3">
       <SectionTitle title="বিবরণ বদলান" />
       <Textarea value={text} onChange={(e) => setText(e.target.value)} />
-      <p className="text-[11px] text-slate-500">
+      <p className="text-[11px] text-dim">
         একমাত্র এই ঘরটাই বদলানো যায়। কে বদলাল, কখন, আগে কী ছিল, পরে কী হলো — সব লগে জমা হবে।
       </p>
       <Button
@@ -735,17 +718,17 @@ function ReversePanel({
   });
 
   return (
-    <Card className="space-y-3 border-rose-300 dark:border-rose-900">
+    <Card className="space-y-3 border-rose/40">
       <SectionTitle
         title={
-          <span className="flex items-center gap-1.5 text-rose-700 dark:text-rose-400">
+          <span className="flex items-center gap-1.5 text-rose">
             <RotateCcw className="h-4 w-4" />
             বাতিল / সংশোধনী
           </span>
         }
       />
 
-      <div className="rounded-xl bg-rose-50 p-3 text-[12px] leading-relaxed text-rose-900 dark:bg-rose-950/40 dark:text-rose-300">
+      <div className="rounded-xl bg-rose/10 p-3 text-[12px] leading-relaxed text-rose">
         মোছার বদলে একটা উল্টো এন্ট্রি তৈরি হবে। মূল এন্ট্রিটা খাতায় থেকেই যাবে (প্রমাণ হিসেবে),
         পণ্যের সারিগুলো আপনাআপনি অনুলিপি হবে, স্টকে উল্টো প্রভাব পড়বে, আর দুটোই টাকার হিসাব থেকে
         বাদ পড়ে যাবে। এটা আর ফেরানো যাবে না।
@@ -769,12 +752,12 @@ function ReversePanel({
         </Field>
       </div>
 
-      <label className="flex items-start gap-2.5 text-[12px] text-slate-700 dark:text-slate-300">
+      <label className="flex items-start gap-2.5 text-[12px] text-ink">
         <input
           type="checkbox"
           checked={confirmed}
           onChange={(e) => setConfirmed(e.target.checked)}
-          className="mt-0.5 h-4 w-4 accent-rose-600"
+          className="mt-0.5 h-4 w-4 accent-rose"
         />
         আমি বুঝেছি — এটা ফেরানো যাবে না।
       </label>

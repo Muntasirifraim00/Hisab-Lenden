@@ -34,6 +34,20 @@ export function money(amount: number | string | null | undefined, opts?: { bn?: 
   return `${sign}৳${opts?.bn === false ? text : toBn(text)}`;
 }
 
+/** চার্টের অক্ষের জন্য — ৳ আর পয়সা ছাড়া, বড় অঙ্ক লাখ/কোটিতে */
+export function moneyAxis(amount: number | string | null | undefined) {
+  const n = Number(amount ?? 0);
+  const safe = Number.isFinite(n) ? n : 0;
+  const abs = Math.abs(safe);
+  const sign = safe < 0 ? "-" : "";
+
+  if (abs >= 1e7) return `${sign}${toBn(round1(abs / 1e7))} কো`;
+  if (abs >= 1e5) return `${sign}${toBn(round1(abs / 1e5))} লা`;
+  return `${sign}${toBn(groupIndian(String(Math.round(abs))))}`;
+}
+
+const round1 = (n: number) => String(Math.round(n * 10) / 10);
+
 /** পরিমাণ — অপ্রয়োজনীয় শূন্য বাদ দিয়ে */
 export function qtyText(value: number | string | null | undefined) {
   const n = Number(value ?? 0);

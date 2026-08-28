@@ -44,43 +44,35 @@ function StockPage() {
       <Card>
         <SectionTitle title="গুদামের অবস্থা" />
         <div className="grid grid-cols-3 gap-2 text-center">
-          <div className="rounded-xl bg-slate-100 p-3 dark:bg-slate-800">
-            <p className="text-[10px] font-semibold text-slate-500">মোট মূল্য</p>
+          <div className="rounded-xl bg-card-2 p-3">
+            <p className="text-[10px] font-semibold text-dim">মোট মূল্য</p>
             <p className="mt-0.5 text-[15px] font-bold">{money(totals.value)}</p>
           </div>
           <button
             onClick={() => setLens(lens === "low" ? "all" : "low")}
             className={cn(
               "rounded-xl p-3 transition",
-              lens === "low"
-                ? "bg-amber-200 dark:bg-amber-900"
-                : "bg-amber-50 dark:bg-amber-950/40",
+              lens === "low" ? "bg-amber/25" : "bg-amber/10",
             )}
           >
-            <p className="text-[10px] font-semibold text-amber-700 dark:text-amber-400">লো-স্টক</p>
-            <p className="mt-0.5 text-[15px] font-bold text-amber-800 dark:text-amber-300">
-              {toBn(totals.low)}
-            </p>
+            <p className="text-[10px] font-semibold text-amber">লো-স্টক</p>
+            <p className="mt-0.5 text-[15px] font-bold text-amber">{toBn(totals.low)}</p>
           </button>
           <button
             onClick={() => setLens(lens === "negative" ? "all" : "negative")}
             className={cn(
               "rounded-xl p-3 transition",
-              lens === "negative"
-                ? "bg-rose-200 dark:bg-rose-900"
-                : "bg-rose-50 dark:bg-rose-950/40",
+              lens === "negative" ? "bg-rose/25" : "bg-rose/10",
             )}
           >
-            <p className="text-[10px] font-semibold text-rose-700 dark:text-rose-400">ঋণাত্মক</p>
-            <p className="mt-0.5 text-[15px] font-bold text-rose-800 dark:text-rose-300">
-              {toBn(totals.negative)}
-            </p>
+            <p className="text-[10px] font-semibold text-rose">ঋণাত্মক</p>
+            <p className="mt-0.5 text-[15px] font-bold text-rose">{toBn(totals.negative)}</p>
           </button>
         </div>
       </Card>
 
       <div className="relative">
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-faint" />
         <Input
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -122,10 +114,8 @@ function StockPage() {
                   }}
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-[14px] font-bold text-slate-800 dark:text-slate-200">
-                    {r.product_name}
-                  </p>
-                  <p className="text-[11px] text-slate-500">
+                  <p className="truncate text-[14px] font-bold text-ink">{r.product_name}</p>
+                  <p className="text-[11px] text-dim">
                     {r.category_name ?? "ক্যাটাগরি নেই"}
                     {num(r.low_stock_threshold) > 0
                       ? ` · সীমা ${qtyText(r.low_stock_threshold)}`
@@ -137,27 +127,27 @@ function StockPage() {
                     className={cn(
                       "text-[15px] font-bold",
                       r.stock_state === "negative"
-                        ? "text-rose-600"
+                        ? "text-rose"
                         : r.stock_state === "low"
-                          ? "text-amber-600"
-                          : "text-slate-800 dark:text-slate-200",
+                          ? "text-amber"
+                          : "text-ink",
                     )}
                   >
                     {qtyText(r.qty_on_hand)}{" "}
                     <span className="text-[11px] font-medium">{unitLabel(r.unit)}</span>
                   </p>
-                  <p className="text-[11px] text-slate-500">{money(r.stock_value)}</p>
+                  <p className="text-[11px] text-dim">{money(r.stock_value)}</p>
                 </div>
                 <ChevronDown
                   className={cn(
-                    "h-4 w-4 shrink-0 text-slate-400 transition",
+                    "h-4 w-4 shrink-0 text-faint transition",
                     openId === r.product_id && "rotate-180",
                   )}
                 />
               </button>
 
               {r.stock_state === "negative" ? (
-                <p className="mx-3 mb-3 flex items-start gap-1.5 rounded-lg bg-rose-50 px-2.5 py-2 text-[11px] text-rose-800 dark:bg-rose-950/40 dark:text-rose-300">
+                <p className="mx-3 mb-3 flex items-start gap-1.5 rounded-lg bg-rose/10 px-2.5 py-2 text-[11px] text-rose">
                   <TriangleAlert className="mt-0.5 h-3 w-3 shrink-0" />
                   স্টকে যা ছিল তার বেশি বিক্রি হয়েছে। ক্রয় বা ওপেনিং স্টক লিখতে ভুলে গেছেন কি না
                   দেখুন।
@@ -184,7 +174,7 @@ function Ledger({ productId }: { productId: string }) {
 
   const rows = moves.data ?? [];
   if (!rows.length) {
-    return <p className="px-3 pb-3 text-[12px] text-slate-500">কোনো নড়াচড়া নেই।</p>;
+    return <p className="px-3 pb-3 text-[12px] text-dim">কোনো নড়াচড়া নেই।</p>;
   }
 
   // চলমান জেরে — সবচেয়ে পুরনো থেকে যোগ করে
@@ -198,9 +188,9 @@ function Ledger({ productId }: { productId: string }) {
     .reverse();
 
   return (
-    <div className="border-t border-slate-100 px-3 py-2 dark:border-slate-800">
-      <p className="mb-1.5 text-[11px] font-bold text-slate-500">খতিয়ান</p>
-      <div className="divide-y divide-slate-100 dark:divide-slate-800">
+    <div className="border-t border-line px-3 py-2">
+      <p className="mb-1.5 text-[11px] font-bold text-dim">খতিয়ান</p>
+      <div className="divide-y divide-line">
         {withBalance.map((m) => (
           <div key={m.id} className="flex items-center gap-2.5 py-2">
             <Chip color={num(m.qty) >= 0 ? "#16a34a" : "#dc2626"}>
@@ -208,13 +198,11 @@ function Ledger({ productId }: { productId: string }) {
               {qtyText(Math.abs(num(m.qty)))}
             </Chip>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-[12px] font-semibold text-slate-700 dark:text-slate-300">
+              <p className="truncate text-[12px] font-semibold text-ink">
                 {STOCK_REASONS[m.reason] ?? m.reason}
-                {m.note ? (
-                  <span className="ml-1 font-normal text-slate-400">· {m.note}</span>
-                ) : null}
+                {m.note ? <span className="ml-1 font-normal text-faint">· {m.note}</span> : null}
               </p>
-              <p className="text-[10px] text-slate-500">
+              <p className="text-[10px] text-dim">
                 {bnDate(m.moved_on)} · {m.created_by_name} · দর {money(m.unit_cost)}
               </p>
             </div>
@@ -222,12 +210,12 @@ function Ledger({ productId }: { productId: string }) {
               <Link
                 to="/hisab/invoice/$id"
                 params={{ id: m.invoice_id }}
-                className="shrink-0 text-[11px] font-semibold text-blue-700 dark:text-blue-400"
+                className="shrink-0 text-[11px] font-semibold text-brand"
               >
                 দেখুন
               </Link>
             ) : null}
-            <span className="w-12 shrink-0 text-right text-[11px] font-bold tabular-nums text-slate-600 dark:text-slate-400">
+            <span className="w-12 shrink-0 text-right text-[11px] font-bold tabular-nums text-dim">
               {qtyText(m.balance)}
             </span>
           </div>

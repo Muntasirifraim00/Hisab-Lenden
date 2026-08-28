@@ -1,74 +1,171 @@
 @import "tailwindcss" source(none);
 @source "../src";
 
-@custom-variant dark (&:is(.dark *));
+/* =====================================================================
+   হিসাব — ডিজাইন টোকেন
+   গাঢ় থিম মূল; ব্যবহারকারী চাইলে আলো-থিমে বদলাতে পারে।
+   থিম বাছাই <html data-theme="..."> এ বসে, তাই দুই দিকেই টোকেন লেখা।
+   ===================================================================== */
 
-/*
- * হিসাবের পাতাগুলো বেশিরভাগ জায়গায় সরাসরি Tailwind-এর রঙ (slate/blue/…) ব্যবহার
- * করে। নিচের টোকেনগুলো শুধু সেই কম্পোনেন্টগুলোর জন্য যেগুলো shadcn ধাঁচের
- * semantic নাম চায় — যেমন টোস্ট (sonner)।
- */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-border: var(--border);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --font-sans: "Noto Sans Bengali", "Hind Siliguri", system-ui, -apple-system, sans-serif;
+  --color-bg: var(--bg);
+  --color-bg-soft: var(--bg-soft);
+  --color-panel: var(--panel);
+  --color-card: var(--card);
+  --color-card-2: var(--card-2);
+  --color-line: var(--line);
+  --color-line-soft: var(--line-soft);
+  --color-ink: var(--ink);
+  --color-dim: var(--dim);
+  --color-faint: var(--faint);
+  --color-brand: var(--brand);
+  --color-brand-2: var(--brand-2);
+
+  --color-sky: var(--a-sky);
+  --color-mint: var(--a-mint);
+  --color-amber: var(--a-amber);
+  --color-rose: var(--a-rose);
+  --color-violet: var(--a-violet);
+  --color-teal: var(--a-teal);
+
+  --radius-card: 1rem;
+  --font-sans:
+    "Noto Sans Bengali", "Hind Siliguri", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
 }
 
-:root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.21 0.03 264);
-  --muted: oklch(0.97 0.005 264);
-  --muted-foreground: oklch(0.55 0.02 264);
-  --border: oklch(0.92 0.01 264);
-  --primary: oklch(0.42 0.17 265);
-  --primary-foreground: oklch(0.98 0 0);
+/* ---------- গাঢ় (মূল) ---------- */
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #080a14;
+  --bg-soft: #0b0e1b;
+  --panel: #0c1020;
+  --card: #121729;
+  --card-2: #171d33;
+  --line: rgba(255, 255, 255, 0.07);
+  --line-soft: rgba(255, 255, 255, 0.04);
+
+  --ink: #e7e9f5;
+  --dim: #949ab6;
+  --faint: #666d8c;
+
+  --brand: #6366f1;
+  --brand-2: #a855f7;
+
+  --a-sky: #3b82f6;
+  --a-mint: #10b981;
+  --a-amber: #f59e0b;
+  --a-rose: #f43f5e;
+  --a-violet: #a855f7;
+  --a-teal: #14b8a6;
+
+  /* চার্টের সারি — গাঢ় পৃষ্ঠের জন্য যাচাই করা */
+  --s1: #3987e5;
+  --s2: #d95926;
+  --s3: #199e70;
+  --grid: rgba(255, 255, 255, 0.07);
 }
 
-.dark {
-  --background: oklch(0.21 0.03 264);
-  --foreground: oklch(0.97 0.005 264);
-  --muted: oklch(0.28 0.03 264);
-  --muted-foreground: oklch(0.71 0.02 264);
-  --border: oklch(0.33 0.02 264);
-  --primary: oklch(0.62 0.17 265);
-  --primary-foreground: oklch(0.21 0.03 264);
+/* ---------- আলো ---------- */
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --bg: #f4f5fb;
+  --bg-soft: #eef0f8;
+  --panel: #ffffff;
+  --card: #ffffff;
+  --card-2: #f6f7fc;
+  --line: rgba(15, 23, 42, 0.09);
+  --line-soft: rgba(15, 23, 42, 0.05);
+
+  --ink: #131829;
+  --dim: #5c6480;
+  --faint: #858ca6;
+
+  --brand: #5b56e8;
+  --brand-2: #9333ea;
+
+  --a-sky: #2563eb;
+  --a-mint: #059669;
+  --a-amber: #d97706;
+  --a-rose: #e11d48;
+  --a-violet: #9333ea;
+  --a-teal: #0d9488;
+
+  /* চার্টের সারি — সাদা পৃষ্ঠের জন্য যাচাই করা */
+  --s1: #2a78d6;
+  --s2: #eb6834;
+  --s3: #1baf7a;
+  --grid: rgba(15, 23, 42, 0.08);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not(.light) {
-    --background: oklch(0.21 0.03 264);
-    --foreground: oklch(0.97 0.005 264);
-    --muted: oklch(0.28 0.03 264);
-    --muted-foreground: oklch(0.71 0.02 264);
-    --border: oklch(0.33 0.02 264);
-    --primary: oklch(0.62 0.17 265);
-    --primary-foreground: oklch(0.21 0.03 264);
+/* ওএস গাঢ় হলেও ব্যবহারকারীর "আলো" বাছাই জিতবে */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    color-scheme: light;
+    --bg: #f4f5fb;
+    --bg-soft: #eef0f8;
+    --panel: #ffffff;
+    --card: #ffffff;
+    --card-2: #f6f7fc;
+    --line: rgba(15, 23, 42, 0.09);
+    --line-soft: rgba(15, 23, 42, 0.05);
+    --ink: #131829;
+    --dim: #5c6480;
+    --faint: #858ca6;
+    --brand: #5b56e8;
+    --brand-2: #9333ea;
+    --a-sky: #2563eb;
+    --a-mint: #059669;
+    --a-amber: #d97706;
+    --a-rose: #e11d48;
+    --a-violet: #9333ea;
+    --a-teal: #0d9488;
+    --s1: #2a78d6;
+    --s2: #eb6834;
+    --s3: #1baf7a;
+    --grid: rgba(15, 23, 42, 0.08);
   }
 }
 
+/* ---------- ভিত্তি ---------- */
 html {
   -webkit-text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
-  background-color: var(--background);
-  color: var(--foreground);
+  background: var(--bg);
+  color: var(--ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
 
-/* বাংলা অঙ্ক তালিকায় সারিবদ্ধ রাখতে */
+::selection {
+  background: color-mix(in oklab, var(--brand) 40%, transparent);
+}
+
+/* সরু, নিরিবিলি স্ক্রলবার */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 99px;
+}
+
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }
 
-/* সংখ্যার ঘরে ব্রাউজারের ছোট তীরগুলো লুকানো — ফোনে ভুল চাপ পড়ে */
+/* সংখ্যার ঘরে ব্রাউজারের তীর — ফোনে ভুল চাপ পড়ে */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -78,13 +175,73 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
-/* রিপোর্ট পাতা প্রিন্ট করলে শুধু হিসাবটাই ছাপা হবে */
+/* তারিখের ঘরের আইকন গাঢ় থিমে দেখা যায় না — উল্টে দিই */
+:root[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.55;
+}
+
+/* ---------- পুনর্ব্যবহারযোগ্য টুকরো ---------- */
+
+/* ব্র্যান্ড গ্রেডিয়েন্ট — Quick Add, প্রধান বোতাম, সক্রিয় নেভ */
+.hb-grad {
+  background-image: linear-gradient(135deg, var(--brand) 0%, var(--brand-2) 100%);
+}
+
+/* কার্ডের উপর মৃদু আলো, রেফারেন্সের মতো */
+.hb-card-glow {
+  position: relative;
+  overflow: hidden;
+}
+.hb-card-glow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    120% 100% at 0% 0%,
+    color-mix(in oklab, var(--tint, var(--brand)) 12%, transparent) 0%,
+    transparent 60%
+  );
+  pointer-events: none;
+}
+
+/* সাহায্য পাতার লেখা */
+.hb-prose {
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--dim);
+}
+.hb-prose p + p,
+.hb-prose ul + p,
+.hb-prose p + ul {
+  margin-top: 0.6rem;
+}
+.hb-prose ul {
+  list-style: disc;
+  padding-left: 1.15rem;
+}
+.hb-prose li {
+  margin-top: 0.2rem;
+}
+.hb-prose b {
+  color: var(--ink);
+}
+
+/* Recharts-এর ডিফল্ট ফোকাস আউটলাইন সরানো */
+.recharts-wrapper:focus,
+.recharts-surface:focus {
+  outline: none;
+}
+
+/* রিপোর্ট প্রিন্ট করলে শুধু হিসাবটাই ছাপা হয় */
 @media print {
-  body {
-    background: #fff;
+  :root {
+    --bg: #fff;
+    --card: #fff;
+    --ink: #000;
+    --dim: #333;
   }
-  header,
-  nav,
+  .hb-chrome,
   .print\:hidden {
     display: none !important;
   }

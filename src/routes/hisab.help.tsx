@@ -178,7 +178,7 @@ function HelpPage() {
     <div className="space-y-3">
       <Card>
         <SectionTitle title="নিয়মকানুন" />
-        <p className="text-[12px] leading-relaxed text-slate-600 dark:text-slate-400">
+        <p className="text-[12px] leading-relaxed text-dim">
           যে প্রশ্নগুলো সবচেয়ে বেশি ওঠে, সেগুলোর উত্তর নিচে। যেকোনো শিরোনামে চাপ দিন।
         </p>
       </Card>
@@ -190,35 +190,31 @@ function HelpPage() {
               onClick={() => setOpen(open === index ? null : index)}
               className="flex w-full items-center gap-3 p-3.5 text-left"
             >
-              <span className="flex-1 text-[14px] font-bold text-slate-800 dark:text-slate-200">
-                {topic.title}
-              </span>
+              <span className="flex-1 text-[14px] font-bold text-ink">{topic.title}</span>
               <ChevronDown
                 className={cn(
-                  "h-4 w-4 shrink-0 text-slate-400 transition",
+                  "h-4 w-4 shrink-0 text-faint transition",
                   open === index && "rotate-180",
                 )}
               />
             </button>
             {open === index ? (
-              <div className="hisab-prose border-t border-slate-100 px-3.5 py-3 dark:border-slate-800">
-                {topic.body}
-              </div>
+              <div className="hb-prose border-t border-line px-3.5 py-3">{topic.body}</div>
             ) : null}
           </Card>
         ))}
       </div>
 
-      <Card className="border-emerald-200 bg-emerald-50 dark:border-emerald-900 dark:bg-emerald-950/30">
+      <Card className="border-mint/30 bg-mint/10">
         <SectionTitle
           title={
-            <span className="flex items-center gap-1.5 text-emerald-900 dark:text-emerald-300">
+            <span className="flex items-center gap-1.5 text-mint">
               <ShieldCheck className="h-4 w-4" />
               গড়মিল ঠেকানোর সুরক্ষা
             </span>
           }
         />
-        <ol className="space-y-1.5 text-[12px] leading-relaxed text-emerald-900 dark:text-emerald-300">
+        <ol className="space-y-1.5 text-[12px] leading-relaxed text-mint">
           {GUARDS.map((g, i) => (
             <li key={g} className="flex gap-2">
               <span className="font-bold tabular-nums opacity-60">{i + 1}.</span>
@@ -227,16 +223,6 @@ function HelpPage() {
           ))}
         </ol>
       </Card>
-
-      <style>{`
-        .hisab-prose { font-size: 13px; line-height: 1.75; color: rgb(71 85 105); }
-        .hisab-prose p + p, .hisab-prose ul + p, .hisab-prose p + ul { margin-top: 0.6rem; }
-        .hisab-prose ul { list-style: disc; padding-left: 1.15rem; }
-        .hisab-prose ul li { margin-top: 0.2rem; }
-        .hisab-prose b { color: rgb(15 23 42); }
-        :where(.dark) .hisab-prose { color: rgb(148 163 184); }
-        :where(.dark) .hisab-prose b { color: rgb(226 232 240); }
-      `}</style>
     </div>
   );
 }

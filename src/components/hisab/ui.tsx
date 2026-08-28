@@ -2,14 +2,13 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { money, toBn } from "@/lib/hisab/format";
 
-/* ------------------------------ কার্ড ------------------------------ */
+/* ============================ পৃষ্ঠ ============================ */
 
 export function Card({ className, children, ...rest }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn(
-        "rounded-2xl border border-slate-200 bg-white p-4 shadow-sm",
-        "dark:border-slate-800 dark:bg-slate-900",
+        "rounded-2xl border border-line bg-card p-4 shadow-[0_1px_2px_rgba(0,0,0,0.18)]",
         className,
       )}
       {...rest}
@@ -19,6 +18,7 @@ export function Card({ className, children, ...rest }: React.HTMLAttributes<HTML
   );
 }
 
+/** বাঁ পাশে রঙিন দাগসহ শিরোনাম — রেফারেন্সের "Today's Figures" ধাঁচ */
 export function SectionTitle({
   title,
   right,
@@ -30,44 +30,121 @@ export function SectionTitle({
 }) {
   return (
     <div className={cn("mb-3 flex items-center justify-between gap-3", className)}>
-      <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">{title}</h2>
+      <h2 className="flex items-center gap-2.5 text-[15px] font-bold text-ink">
+        <span className="hb-grad h-4 w-[3px] shrink-0 rounded-full" />
+        {title}
+      </h2>
       {right}
     </div>
   );
 }
 
-/* ------------------------------ পরিসংখ্যান ------------------------------ */
+/* ============================ পরিসংখ্যান ============================ */
 
-export function StatTile({
+export type Tone = "sky" | "mint" | "amber" | "rose" | "violet" | "teal" | "slate";
+
+const TONE_VAR: Record<Tone, string> = {
+  sky: "var(--a-sky)",
+  mint: "var(--a-mint)",
+  amber: "var(--a-amber)",
+  rose: "var(--a-rose)",
+  violet: "var(--a-violet)",
+  teal: "var(--a-teal)",
+  slate: "var(--dim)",
+};
+
+export const toneColor = (tone: Tone) => TONE_VAR[tone];
+
+/** রঙিন গোল-চৌকো আইকন — সাইডবার, দ্রুত কাজ আর স্ট্যাট কার্ড সবখানে */
+export function IconTile({
+  tone = "slate",
+  size = 38,
+  children,
+  className,
+}: {
+  tone?: Tone;
+  size?: number;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  const c = TONE_VAR[tone];
+  return (
+    <span
+      className={cn("grid shrink-0 place-items-center rounded-xl", className)}
+      style={{
+        width: size,
+        height: size,
+        color: c,
+        backgroundColor: `color-mix(in oklab, ${c} 15%, transparent)`,
+      }}
+    >
+      {children}
+    </span>
+  );
+}
+
+export function StatCard({
   label,
   value,
   sub,
   tone = "slate",
   icon,
+  className,
 }: {
   label: string;
   value: React.ReactNode;
-  sub?: string;
-  tone?: "blue" | "green" | "orange" | "purple" | "red" | "slate";
+  sub?: React.ReactNode;
+  tone?: Tone;
+  icon?: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn("hb-card-glow rounded-2xl border border-line bg-card p-3.5", className)}
+      style={{ "--tint": TONE_VAR[tone] } as React.CSSProperties}
+    >
+      <div className="relative flex items-center gap-2.5">
+        {icon ? (
+          <IconTile tone={tone} size={32}>
+            {icon}
+          </IconTile>
+        ) : null}
+        <span className="text-[12.5px] font-semibold text-dim">{label}</span>
+      </div>
+      <div className="relative mt-2 text-[22px] font-bold leading-tight tracking-tight text-ink">
+        {value}
+      </div>
+      {sub ? <div className="relative mt-0.5 text-[11px] text-faint">{sub}</div> : null}
+    </div>
+  );
+}
+
+/** ছোট সারিবদ্ধ কার্ড — "This Month's Figures" ধাঁচ */
+export function MiniStat({
+  label,
+  value,
+  tone = "slate",
+  icon,
+}: {
+  label: string;
+  value: React.ReactNode;
+  tone?: Tone;
   icon?: React.ReactNode;
 }) {
-  const tones = {
-    blue: "bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300",
-    green: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300",
-    orange: "bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300",
-    purple: "bg-violet-50 text-violet-700 dark:bg-violet-950/40 dark:text-violet-300",
-    red: "bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300",
-    slate: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
-  }[tone];
-
   return (
-    <div className={cn("rounded-xl p-3", tones)}>
-      <div className="flex items-start justify-between gap-2">
-        <span className="text-[13px] font-semibold opacity-90">{label}</span>
-        {icon ? <span className="opacity-70">{icon}</span> : null}
+    <div
+      className="hb-card-glow rounded-2xl border border-line bg-card p-3"
+      style={{ "--tint": TONE_VAR[tone] } as React.CSSProperties}
+    >
+      <div className="relative flex items-center gap-2">
+        {icon ? (
+          <IconTile tone={tone} size={26}>
+            {icon}
+          </IconTile>
+        ) : null}
+        <span className="truncate text-[11.5px] font-semibold text-dim">{label}</span>
       </div>
-      <div className="mt-1.5 text-xl font-bold tracking-tight">{value}</div>
-      {sub ? <div className="mt-0.5 text-[11px] opacity-70">{sub}</div> : null}
+      <div className="relative mt-1.5 text-[18px] font-bold tracking-tight text-ink">{value}</div>
     </div>
   );
 }
@@ -83,19 +160,13 @@ export function Money({
 }) {
   const n = Number(amount ?? 0);
   return (
-    <span
-      className={cn(
-        signed && n < 0 && "text-rose-600 dark:text-rose-400",
-        signed && n > 0 && "text-emerald-600 dark:text-emerald-400",
-        className,
-      )}
-    >
+    <span className={cn(signed && n < 0 && "text-rose", signed && n > 0 && "text-mint", className)}>
       {money(n)}
     </span>
   );
 }
 
-/* ------------------------------ ব্যাজ ------------------------------ */
+/* ============================ ব্যাজ ============================ */
 
 export function Chip({
   children,
@@ -110,17 +181,21 @@ export function Chip({
     <span
       className={cn(
         "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold",
-        !color && "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
+        !color && "bg-card-2 text-dim",
         className,
       )}
-      style={color ? { backgroundColor: `${color}1a`, color } : undefined}
+      style={
+        color
+          ? { backgroundColor: `color-mix(in oklab, ${color} 16%, transparent)`, color }
+          : undefined
+      }
     >
       {children}
     </span>
   );
 }
 
-/* ------------------------------ ফর্ম ------------------------------ */
+/* ============================ ফর্ম ============================ */
 
 export function Field({
   label,
@@ -139,23 +214,20 @@ export function Field({
 }) {
   return (
     <label className={cn("block", className)}>
-      <span className="mb-1 flex items-center gap-1 text-[13px] font-semibold text-slate-700 dark:text-slate-300">
+      <span className="mb-1.5 flex items-center gap-1 text-[12.5px] font-semibold text-dim">
         {label}
-        {required ? <span className="text-rose-500">*</span> : null}
+        {required ? <span className="text-rose">*</span> : null}
       </span>
       {children}
-      {hint ? (
-        <span className="mt-1 block text-[11px] text-slate-500 dark:text-slate-400">{hint}</span>
-      ) : null}
-      {error ? <span className="mt-1 block text-[11px] text-rose-600">{error}</span> : null}
+      {hint ? <span className="mt-1 block text-[11px] text-faint">{hint}</span> : null}
+      {error ? <span className="mt-1 block text-[11px] text-rose">{error}</span> : null}
     </label>
   );
 }
 
 export const inputClass =
-  "w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-[15px] text-slate-900 " +
-  "outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 " +
-  "dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-600";
+  "w-full rounded-xl border border-line bg-card-2 px-3 py-2.5 text-[15px] text-ink outline-none " +
+  "transition placeholder:text-faint focus:border-brand focus:ring-2 focus:ring-brand/25";
 
 export function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return <input {...props} className={cn(inputClass, props.className)} />;
@@ -175,21 +247,20 @@ export function Button({
   className,
   ...rest
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: "primary" | "outline" | "ghost" | "danger" | "success";
+  variant?: "primary" | "outline" | "ghost" | "danger" | "success" | "soft";
   size?: "sm" | "md" | "lg";
 }) {
-  const variants = {
-    primary: "bg-blue-700 text-white hover:bg-blue-800 disabled:bg-blue-700/50",
-    outline:
-      "border border-slate-300 bg-white text-slate-800 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800",
-    ghost: "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800",
-    danger: "bg-rose-600 text-white hover:bg-rose-700 disabled:bg-rose-600/50",
-    success: "bg-emerald-600 text-white hover:bg-emerald-700 disabled:bg-emerald-600/50",
-  }[variant];
-
+  const variants: Record<string, string> = {
+    primary: "hb-grad text-white shadow-lg shadow-brand/20 hover:opacity-90",
+    soft: "bg-card-2 text-ink hover:brightness-125",
+    outline: "border border-line bg-card text-ink hover:bg-card-2",
+    ghost: "text-dim hover:bg-card-2 hover:text-ink",
+    danger: "bg-rose text-white hover:opacity-90",
+    success: "bg-mint text-white hover:opacity-90",
+  };
   const sizes = {
     sm: "px-2.5 py-1.5 text-[12px]",
-    md: "px-4 py-2.5 text-[14px]",
+    md: "px-4 py-2.5 text-[13.5px]",
     lg: "px-5 py-3 text-[15px]",
   }[size];
 
@@ -198,8 +269,8 @@ export function Button({
       {...rest}
       className={cn(
         "inline-flex items-center justify-center gap-1.5 rounded-xl font-semibold transition",
-        "disabled:cursor-not-allowed disabled:opacity-60",
-        variants,
+        "disabled:cursor-not-allowed disabled:opacity-50",
+        variants[variant],
         sizes,
         className,
       )}
@@ -207,13 +278,31 @@ export function Button({
   );
 }
 
-/* ------------------------------ অবস্থা ------------------------------ */
+/** গোল টগল বোতাম — ৭ দিন / ৩০ দিন ধাঁচ */
+export function Pill({
+  active,
+  className,
+  ...rest
+}: React.ButtonHTMLAttributes<HTMLButtonElement> & { active?: boolean }) {
+  return (
+    <button
+      {...rest}
+      className={cn(
+        "shrink-0 rounded-lg px-3 py-1.5 text-[12px] font-bold transition",
+        active ? "hb-grad text-white" : "bg-card-2 text-dim hover:text-ink",
+        className,
+      )}
+    />
+  );
+}
+
+/* ============================ অবস্থা ============================ */
 
 export function Spinner({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "h-5 w-5 animate-spin rounded-full border-2 border-slate-300 border-t-blue-600",
+        "h-5 w-5 animate-spin rounded-full border-2 border-line border-t-brand",
         className,
       )}
     />
@@ -222,7 +311,7 @@ export function Spinner({ className }: { className?: string }) {
 
 export function Loading({ label = "লোড হচ্ছে…" }: { label?: string }) {
   return (
-    <div className="flex items-center justify-center gap-2 py-10 text-sm text-slate-500">
+    <div className="flex items-center justify-center gap-2.5 py-12 text-sm text-dim">
       <Spinner />
       {label}
     </div>
@@ -241,10 +330,10 @@ export function Empty({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-slate-300 px-6 py-12 text-center dark:border-slate-700">
-      {icon ? <div className="text-slate-400">{icon}</div> : null}
-      <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">{title}</p>
-      {hint ? <p className="max-w-xs text-xs text-slate-500">{hint}</p> : null}
+    <div className="flex flex-col items-center justify-center gap-2.5 rounded-2xl border border-dashed border-line px-6 py-14 text-center">
+      {icon ? <div className="text-faint">{icon}</div> : null}
+      <p className="text-sm font-semibold text-ink">{title}</p>
+      {hint ? <p className="max-w-xs text-xs text-dim">{hint}</p> : null}
       {action}
     </div>
   );
@@ -253,60 +342,86 @@ export function Empty({
 export function ErrorNote({ children }: { children: React.ReactNode }) {
   if (!children) return null;
   return (
-    <div className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-[13px] text-rose-800 dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-300">
+    <div className="rounded-xl border border-rose/30 bg-rose/10 px-3 py-2.5 text-[13px] text-rose">
       {children}
     </div>
   );
 }
 
-/* ------------------------------ অন্যান্য ------------------------------ */
+export function WarnNote({ children }: { children: React.ReactNode }) {
+  if (!children) return null;
+  return (
+    <div className="rounded-xl border border-amber/30 bg-amber/10 px-3 py-2.5 text-[13px] text-amber">
+      {children}
+    </div>
+  );
+}
+
+/* ============================ অন্যান্য ============================ */
+
+const AVATAR_TONES = [
+  "var(--a-sky)",
+  "var(--a-mint)",
+  "var(--a-violet)",
+  "var(--a-amber)",
+  "var(--a-teal)",
+  "var(--a-rose)",
+];
+
+export function avatarColor(name: string) {
+  let hash = 0;
+  for (let i = 0; i < name.length; i += 1) hash = (hash * 31 + name.charCodeAt(i)) % 997;
+  return AVATAR_TONES[hash % AVATAR_TONES.length];
+}
 
 export function Avatar({ name, size = 32 }: { name: string; size?: number }) {
-  const initial = (name || "?").slice(0, 1);
+  const c = avatarColor(name);
   return (
     <span
-      className="inline-flex shrink-0 items-center justify-center rounded-full font-bold text-white"
+      className="inline-flex shrink-0 items-center justify-center rounded-xl font-bold"
       style={{
         width: size,
         height: size,
         fontSize: size * 0.42,
-        backgroundColor: userTint(name),
+        color: c,
+        backgroundColor: `color-mix(in oklab, ${c} 18%, transparent)`,
       }}
       title={name}
     >
-      {initial}
+      {(name || "?").slice(0, 1)}
     </span>
-  );
-}
-
-function userTint(name: string) {
-  // constants থেকে আলাদা রাখা হয়েছে যাতে অচেনা নামেও একটা স্থির রঙ পড়ে
-  const palette = ["#2563eb", "#16a34a", "#9333ea", "#ea580c", "#0891b2", "#db2777"];
-  let hash = 0;
-  for (let i = 0; i < name.length; i += 1) hash = (hash * 31 + name.charCodeAt(i)) % 997;
-  return palette[hash % palette.length];
-}
-
-export function ProgressBar({
-  value,
-  max,
-  tone = "blue",
-}: {
-  value: number;
-  max: number;
-  tone?: string;
-}) {
-  const pct = max > 0 ? Math.min(100, Math.max(0, (value / max) * 100)) : 0;
-  return (
-    <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
-      <div
-        className="h-full rounded-full transition-all"
-        style={{ width: `${pct}%`, backgroundColor: tone }}
-      />
-    </div>
   );
 }
 
 export function Count({ value }: { value: number }) {
   return <span className="tabular-nums">{toBn(value)}</span>;
+}
+
+/** চার্টের টুলটিপ — সব চার্টে এক চেহারা */
+export function ChartTooltip({
+  active,
+  payload,
+  label,
+  formatter,
+}: {
+  active?: boolean;
+  payload?: { name?: string; value?: number; color?: string; dataKey?: string }[];
+  label?: string | number;
+  formatter?: (value: number) => string;
+}) {
+  if (!active || !payload?.length) return null;
+  const fmt = formatter ?? ((v: number) => money(v));
+
+  return (
+    <div className="rounded-xl border border-line bg-card px-3 py-2 shadow-xl">
+      {label != null ? <p className="mb-1 text-[11px] font-semibold text-dim">{label}</p> : null}
+      {payload.map((row) => (
+        <p key={row.dataKey ?? row.name} className="flex items-center gap-2 text-[12px]">
+          <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: row.color }} />
+          <span className="text-dim">{row.name}</span>
+          <span className="ml-auto font-bold text-ink">{fmt(Number(row.value ?? 0))}</span>
+        </p>
+      ))}
+    </div>
+  );
 }

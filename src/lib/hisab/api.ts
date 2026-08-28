@@ -170,6 +170,31 @@ export async function reverseInvoice(payload: {
   return unwrap<Invoice>(await db.rpc("hb_reverse_invoice", { p: payload }));
 }
 
+/** সবচেয়ে বেশি বিক্রি হওয়া পণ্য — ইনভয়েসের সারি ধরে, বাতিল হওয়াগুলো বাদে */
+export async function listTopProducts(from?: string, limit = 4) {
+  let q = db
+    .from("invoice_items")
+    .select("product_name,qty,line_total,invoices!inner(type,invoice_date,is_reversal,reversed_at)")
+    .eq("invoices.type", "sale")
+    .eq("invoices.is_reversal", false)
+    .is("invoices.reversed_at", null)
+    .limit(2000);
+  if (from) q = q.gte("invoices.invoice_date", from);
+
+  const rows = unwrap<{ product_name: string; qty: number; line_total: number }[]>(await q) ?? [];
+
+  const map = new Map<string, { name: string; qty: number; amount: number }>();
+  for (const r of rows) {
+    const name = (r.product_name ?? "").trim() || "পণ্য";
+    const prev = map.get(name) ?? { name, qty: 0, amount: 0 };
+    prev.qty += Number(r.qty ?? 0);
+    prev.amount += Number(r.line_total ?? 0);
+    map.set(name, prev);
+  }
+
+  return [...map.values()].sort((a, b) => b.amount - a.amount).slice(0, limit);
+}
+
 /* ------------------------------ পণ্য ------------------------------ */
 
 export async function listProducts() {

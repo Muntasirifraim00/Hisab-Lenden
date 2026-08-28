@@ -27,9 +27,7 @@ function FilesPage() {
   return (
     <div className="space-y-3">
       <Card className="flex items-center justify-between py-3">
-        <span className="text-[13px] font-bold text-slate-800 dark:text-slate-200">
-          সব মেমোর ছবি
-        </span>
+        <span className="text-[13px] font-bold text-ink">সব মেমোর ছবি</span>
         <Chip>{toBn(rows.length)} টি</Chip>
       </Card>
 
@@ -42,16 +40,13 @@ function FilesPage() {
       ) : (
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {rows.map((r) => (
-            <div
-              key={r.id}
-              className="overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900"
-            >
+            <div key={r.id} className="overflow-hidden rounded-xl border border-line bg-card">
               <button onClick={() => setZoom(r.image_url)} className="block w-full">
                 <img
                   src={r.image_url ?? ""}
                   alt="মেমো"
                   loading="lazy"
-                  className="aspect-square w-full bg-slate-50 object-cover dark:bg-slate-950"
+                  className="aspect-square w-full bg-card-2 object-cover"
                 />
               </button>
               <Link to="/hisab/invoice/$id" params={{ id: r.id }} className="block p-2">
@@ -61,7 +56,7 @@ function FilesPage() {
                 >
                   {typeLabel(r.type)} · {money(r.total_amount)}
                 </p>
-                <p className="mt-0.5 truncate text-[10px] text-slate-500">
+                <p className="mt-0.5 truncate text-[10px] text-dim">
                   {bnDate(r.invoice_date)} · {r.party_name || "—"}
                 </p>
               </Link>
@@ -77,7 +72,7 @@ function FilesPage() {
           role="presentation"
         >
           <button
-            className="absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full bg-white/15 text-white"
+            className="absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full bg-card/15 text-white"
             aria-label="বন্ধ"
           >
             <X className="h-5 w-5" />

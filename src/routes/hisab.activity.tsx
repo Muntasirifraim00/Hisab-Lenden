@@ -38,16 +38,14 @@ function ActivityPage() {
       {days.map((day) => (
         <div key={day.date}>
           <div className="mb-2 flex items-center justify-between">
-            <h2 className="text-[13px] font-bold text-slate-800 dark:text-slate-200">
-              {dayLabel(day.date)}
-            </h2>
-            <span className="text-[11px] text-slate-500">
+            <h2 className="text-[13px] font-bold text-ink">{dayLabel(day.date)}</h2>
+            <span className="text-[11px] text-dim">
               {toBn(day.rows.length)} টি · {money(day.total)}
             </span>
           </div>
 
           <Card className="p-0">
-            <div className="divide-y divide-slate-100 dark:divide-slate-800">
+            <div className="divide-y divide-line">
               {day.rows.map((r) => (
                 <Link
                   key={r.id}
@@ -57,13 +55,13 @@ function ActivityPage() {
                 >
                   <Avatar name={r.created_by_name} size={30} />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-[13px] text-slate-700 dark:text-slate-300">
+                    <p className="truncate text-[13px] text-ink">
                       <span className="font-bold">{r.created_by_name}</span>{" "}
-                      <span className="text-slate-500">
+                      <span className="text-dim">
                         {typeLabel(r.type)} লিখেছেন — {r.party_name || r.details || "বিবরণ নেই"}
                       </span>
                     </p>
-                    <p className="mt-0.5 flex items-center gap-1.5 text-[10px] text-slate-500">
+                    <p className="mt-0.5 flex items-center gap-1.5 text-[10px] text-dim">
                       {bnDateTime(r.created_at)}
                       {r.is_reversal ? <Chip color="#dc2626">সংশোধনী</Chip> : null}
                       {r.reversed_at ? <Chip color="#dc2626">বাতিল হয়েছে</Chip> : null}

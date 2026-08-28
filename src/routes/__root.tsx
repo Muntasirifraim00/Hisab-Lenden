@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
+import { THEME_BOOT_SCRIPT } from "@/lib/hisab/theme";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
@@ -24,6 +25,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "theme-color", content: "#132a6b" },
     ],
     links: [{ rel: "stylesheet", href: appCss }],
+    // পাতা আঁকার আগেই থিম বসে যায়, নইলে এক ঝলক সাদা দেখা যেত
+    scripts: [{ children: THEME_BOOT_SCRIPT }],
   }),
   shellComponent: RootShell,
   component: RootComponent,
@@ -33,7 +36,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="bn">
+    <html lang="bn" data-theme="dark">
       <head>
         <HeadContent />
       </head>
@@ -62,7 +65,7 @@ function NotFound() {
       action={
         <Link
           to="/hisab"
-          className="inline-flex items-center rounded-xl bg-blue-700 px-4 py-2.5 text-sm font-semibold text-white"
+          className="hb-grad inline-flex items-center rounded-xl px-4 py-2.5 text-sm font-semibold text-white"
         >
           হিসাবে ফিরুন
         </Link>
@@ -85,7 +88,7 @@ function ErrorScreen({ error, reset }: { error: Error; reset: () => void }) {
             router.invalidate();
             reset();
           }}
-          className="inline-flex items-center rounded-xl bg-blue-700 px-4 py-2.5 text-sm font-semibold text-white"
+          className="hb-grad inline-flex items-center rounded-xl px-4 py-2.5 text-sm font-semibold text-white"
         >
           আবার চেষ্টা করুন
         </button>
@@ -104,10 +107,10 @@ function Centered({
   action: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 dark:bg-slate-950">
+    <div className="flex min-h-screen items-center justify-center bg-bg px-4">
       <div className="max-w-sm text-center">
-        <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">{title}</h1>
-        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">{body}</p>
+        <h1 className="text-xl font-bold text-ink">{title}</h1>
+        <p className="mt-2 text-sm text-dim">{body}</p>
         <div className="mt-6">{action}</div>
       </div>
     </div>

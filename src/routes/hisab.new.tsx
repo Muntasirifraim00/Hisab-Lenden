@@ -341,7 +341,7 @@ function NewEntry() {
   return (
     <form onSubmit={submit} className="space-y-4">
       {restored ? (
-        <div className="flex items-center justify-between gap-3 rounded-xl border border-blue-200 bg-blue-50 px-3 py-2 text-[12px] text-blue-900 dark:border-blue-900 dark:bg-blue-950/40 dark:text-blue-300">
+        <div className="flex items-center justify-between gap-3 rounded-xl border border-sky/30 bg-sky/10 px-3 py-2 text-[12px] text-sky">
           <span>আগের অসমাপ্ত ড্রাফট ফিরিয়ে আনা হয়েছে।</span>
           <button
             type="button"
@@ -370,9 +370,7 @@ function NewEntry() {
                 onClick={() => patch({ type: t.value })}
                 className={cn(
                   "rounded-xl border-2 px-2 py-2.5 text-center transition",
-                  active
-                    ? "text-white"
-                    : "border-slate-200 bg-white text-slate-700 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300",
+                  active ? "text-white" : "border-line bg-card text-ink",
                 )}
                 style={active ? { backgroundColor: t.color, borderColor: t.color } : undefined}
               >
@@ -410,12 +408,8 @@ function NewEntry() {
         />
 
         {imagePreview ? (
-          <div className="relative overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
-            <img
-              src={imagePreview}
-              alt="মেমো"
-              className="max-h-72 w-full object-contain bg-slate-50 dark:bg-slate-950"
-            />
+          <div className="relative overflow-hidden rounded-xl border border-line">
+            <img src={imagePreview} alt="মেমো" className="max-h-72 w-full object-contain bg-bg" />
             <button
               type="button"
               onClick={dropImage}
@@ -428,7 +422,7 @@ function NewEntry() {
         ) : (
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-2">
-              <label className="flex cursor-pointer flex-col items-center gap-1.5 rounded-xl border-2 border-dashed border-slate-300 py-5 text-[12px] font-semibold text-slate-600 dark:border-slate-700 dark:text-slate-300">
+              <label className="flex cursor-pointer flex-col items-center gap-1.5 rounded-xl border-2 border-dashed border-line py-5 text-[12px] font-semibold text-dim">
                 <Camera className="h-5 w-5" />
                 ছবি তুলুন
                 <input
@@ -439,7 +433,7 @@ function NewEntry() {
                   onChange={(e) => pickImage(e.target.files?.[0])}
                 />
               </label>
-              <label className="flex cursor-pointer flex-col items-center gap-1.5 rounded-xl border-2 border-dashed border-slate-300 py-5 text-[12px] font-semibold text-slate-600 dark:border-slate-700 dark:text-slate-300">
+              <label className="flex cursor-pointer flex-col items-center gap-1.5 rounded-xl border-2 border-dashed border-line py-5 text-[12px] font-semibold text-dim">
                 <Plus className="h-5 w-5" />
                 ফাইল বাছুন
                 <input
@@ -471,8 +465,8 @@ function NewEntry() {
         )}
 
         {imagePreview ? (
-          <p className="mt-2 flex items-start gap-1.5 text-[11px] text-slate-500">
-            <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0 text-amber-500" />
+          <p className="mt-2 flex items-start gap-1.5 text-[11px] text-dim">
+            <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0 text-amber" />
             AI স্ক্যান ভুল করতে পারে, বিশেষ করে হাতে লেখা মেমোয় — সবসময় মিলিয়ে নেবেন।
           </p>
         ) : null}
@@ -550,24 +544,21 @@ function NewEntry() {
           />
 
           {form.items.length === 0 ? (
-            <p className="rounded-xl bg-slate-50 px-3 py-4 text-center text-[12px] text-slate-500 dark:bg-slate-800/60">
+            <p className="rounded-xl bg-card-2 px-3 py-4 text-center text-[12px] text-dim">
               পণ্য যোগ না করলে স্টকে কোনো প্রভাব পড়বে না — শুধু টাকার হিসাব হবে।
             </p>
           ) : (
             <div className="space-y-3">
               {form.items.map((it, index) => (
-                <div
-                  key={it.key}
-                  className="rounded-xl border border-slate-200 p-3 dark:border-slate-800"
-                >
+                <div key={it.key} className="rounded-xl border border-line p-3">
                   <div className="mb-2 flex items-center justify-between">
-                    <span className="text-[11px] font-bold text-slate-500">সারি {index + 1}</span>
+                    <span className="text-[11px] font-bold text-dim">সারি {index + 1}</span>
                     <button
                       type="button"
                       onClick={() =>
                         setForm((p) => ({ ...p, items: p.items.filter((x) => x.key !== it.key) }))
                       }
-                      className="text-slate-400 hover:text-rose-600"
+                      className="text-faint hover:text-rose"
                       aria-label="সারি মুছুন"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -619,14 +610,14 @@ function NewEntry() {
                         onChange={(e) => setItem(it.key, { unit_price: e.target.value })}
                       />
                     </Field>
-                    <div className="pb-2.5 text-right text-[13px] font-bold text-slate-800 dark:text-slate-200">
+                    <div className="pb-2.5 text-right text-[13px] font-bold text-ink">
                       {money(num(it.qty) * num(it.unit_price))}
                     </div>
                   </div>
                 </div>
               ))}
 
-              <div className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2 text-[13px] font-bold dark:bg-slate-800/60">
+              <div className="flex items-center justify-between rounded-xl bg-card-2 px-3 py-2 text-[13px] font-bold">
                 <span>সারির যোগফল</span>
                 <span>{money(itemsTotal)}</span>
               </div>
@@ -652,7 +643,7 @@ function NewEntry() {
             }
           />
           {form.expenses.length === 0 ? (
-            <p className="rounded-xl bg-slate-50 px-3 py-4 text-center text-[12px] text-slate-500 dark:bg-slate-800/60">
+            <p className="rounded-xl bg-card-2 px-3 py-4 text-center text-[12px] text-dim">
               খাত ভাগ না করলেও চলবে — শুধু মোট অঙ্ক লিখলেই হবে।
             </p>
           ) : (
@@ -702,14 +693,14 @@ function NewEntry() {
                         expenses: p.expenses.filter((x) => x.key !== ex.key),
                       }))
                     }
-                    className="pb-2.5 text-slate-400 hover:text-rose-600"
+                    className="pb-2.5 text-faint hover:text-rose"
                     aria-label="খাত মুছুন"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
               ))}
-              <div className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2 text-[13px] font-bold dark:bg-slate-800/60">
+              <div className="flex items-center justify-between rounded-xl bg-card-2 px-3 py-2 text-[13px] font-bold">
                 <span>খাতের যোগফল</span>
                 <span>{money(expensesTotal)}</span>
               </div>
@@ -720,24 +711,19 @@ function NewEntry() {
 
       {/* অগ্রিম ক্রয় */}
       {form.type === "purchase" ? (
-        <Card
-          className={cn(
-            form.goods_pending &&
-              "border-orange-300 bg-orange-50 dark:border-orange-900 dark:bg-orange-950/30",
-          )}
-        >
+        <Card className={cn(form.goods_pending && "border-amber/40 bg-amber/10")}>
           <label className="flex items-start gap-3">
             <input
               type="checkbox"
               checked={form.goods_pending}
               onChange={(e) => patch({ goods_pending: e.target.checked })}
-              className="mt-0.5 h-5 w-5 rounded border-slate-300 accent-orange-600"
+              className="mt-0.5 h-5 w-5 rounded border-line accent-amber"
             />
             <span>
-              <span className="block text-[14px] font-bold text-slate-800 dark:text-slate-200">
+              <span className="block text-[14px] font-bold text-ink">
                 মাল এখনো পাইনি (অগ্রিম ক্রয়)
               </span>
-              <span className="mt-0.5 block text-[11px] leading-relaxed text-slate-600 dark:text-slate-400">
+              <span className="mt-0.5 block text-[11px] leading-relaxed text-dim">
                 টাকার হিসাবে ক্রয় ধরা হবে, কিন্তু স্টকে মাল ঢুকবে না। পরে মাল এলে ইনভয়েস খুলে “মাল
                 বুঝে পেয়েছি” দিলে তখন স্টকে ঢুকবে।
               </span>
@@ -815,20 +801,18 @@ function NewEntry() {
           </Select>
         </Field>
 
-        <div className="grid grid-cols-3 gap-2 rounded-xl bg-slate-50 p-3 text-center dark:bg-slate-800/60">
+        <div className="grid grid-cols-3 gap-2 rounded-xl bg-card-2 p-3 text-center">
           <div>
-            <p className="text-[10px] font-semibold text-slate-500">মোট</p>
+            <p className="text-[10px] font-semibold text-dim">মোট</p>
             <p className="text-[14px] font-bold">{money(total)}</p>
           </div>
           <div>
-            <p className="text-[10px] font-semibold text-slate-500">পরিশোধ</p>
-            <p className="text-[14px] font-bold text-emerald-600">{money(paid)}</p>
+            <p className="text-[10px] font-semibold text-dim">পরিশোধ</p>
+            <p className="text-[14px] font-bold text-mint">{money(paid)}</p>
           </div>
           <div>
-            <p className="text-[10px] font-semibold text-slate-500">বাকি</p>
-            <p
-              className={cn("text-[14px] font-bold", due > 0 ? "text-rose-600" : "text-slate-500")}
-            >
+            <p className="text-[10px] font-semibold text-dim">বাকি</p>
+            <p className={cn("text-[14px] font-bold", due > 0 ? "text-rose" : "text-dim")}>
               {money(due)}
             </p>
           </div>
@@ -845,7 +829,7 @@ function NewEntry() {
             ? warns.map((c) => (
                 <div
                   key={c.message}
-                  className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-[13px] text-amber-900 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-300"
+                  className="rounded-xl border border-amber/30 bg-amber/10 px-3 py-2 text-[13px] text-amber-900"
                 >
                   ⚠️ {c.message}
                 </div>
@@ -873,7 +857,7 @@ function NewEntry() {
         </Button>
       </div>
 
-      <p className="pb-2 text-center text-[11px] leading-relaxed text-slate-500">
+      <p className="pb-2 text-center text-[11px] leading-relaxed text-dim">
         সেভ হলে ইনভয়েস, পণ্যের সারি ও স্টক — সব একসাথে লেখা হবে। মাঝপথে নেট কাটলে একটাও লেখা হবে
         না, তাই গড়মিল হতে পারে না।
       </p>

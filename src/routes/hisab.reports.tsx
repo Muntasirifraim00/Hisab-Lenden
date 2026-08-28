@@ -5,7 +5,7 @@ import { Download, Printer } from "lucide-react";
 import { listLiveInvoices } from "@/lib/hisab/api";
 import { bnDate, bnMonthName, money, num, toBn } from "@/lib/hisab/format";
 import { methodLabel, typeLabel } from "@/lib/hisab/constants";
-import { Button, Card, Loading, SectionTitle, Select, StatTile } from "@/components/hisab/ui";
+import { Button, Card, Loading, SectionTitle, Select, StatCard } from "@/components/hisab/ui";
 import type { Invoice } from "@/lib/hisab/types";
 
 export const Route = createFileRoute("/hisab/reports")({
@@ -162,37 +162,35 @@ function ReportsPage() {
           <Card>
             <SectionTitle
               title={`${bnMonthName(month)} ${toBn(year)}`}
-              right={
-                <span className="text-[11px] text-slate-500">{toBn(rows.length)} টি এন্ট্রি</span>
-              }
+              right={<span className="text-[11px] text-dim">{toBn(rows.length)} টি এন্ট্রি</span>}
             />
             <div className="grid grid-cols-2 gap-2.5">
-              <StatTile label="বিক্রয়" value={money(totals.sales)} tone="blue" />
-              <StatTile label="ক্রয়" value={money(totals.purchases)} tone="green" />
-              <StatTile label="খরচ" value={money(totals.expenses)} tone="orange" />
-              <StatTile
+              <StatCard label="বিক্রয়" value={money(totals.sales)} tone="sky" />
+              <StatCard label="ক্রয়" value={money(totals.purchases)} tone="mint" />
+              <StatCard label="খরচ" value={money(totals.expenses)} tone="amber" />
+              <StatCard
                 label="মোট লাভ"
                 value={money(totals.profit)}
-                tone="purple"
+                tone="violet"
                 sub="বিক্রয় − ক্রয়মূল্য"
               />
             </div>
 
-            <div className="mt-3 space-y-1.5 rounded-xl bg-slate-50 p-3 text-[13px] dark:bg-slate-800/60">
+            <div className="mt-3 space-y-1.5 rounded-xl bg-card-2 p-3 text-[13px]">
               <Line label="বিক্রয়" value={totals.sales} />
               <Line label="বিক্রীত মালের ক্রয়মূল্য (FIFO)" value={-totals.cogs} />
               <Line label="মোট লাভ" value={totals.profit} bold />
               <Line label="পরিচালন খরচ" value={-totals.expenses} />
-              <div className="border-t border-slate-200 pt-1.5 dark:border-slate-700">
+              <div className="border-t border-line pt-1.5">
                 <Line label="নিট মুনাফা" value={net} bold />
               </div>
             </div>
 
             <div className="mt-3 grid grid-cols-2 gap-2.5">
-              <StatTile label="আদায় হয়েছে" value={money(totals.collected)} tone="green" />
-              <StatTile label="পরিশোধ করেছি" value={money(totals.paidOut)} tone="orange" />
-              <StatTile label="মাস শেষে পাওনা" value={money(totals.receivable)} tone="blue" />
-              <StatTile label="মাস শেষে দেনা" value={money(totals.payable)} tone="red" />
+              <StatCard label="আদায় হয়েছে" value={money(totals.collected)} tone="mint" />
+              <StatCard label="পরিশোধ করেছি" value={money(totals.paidOut)} tone="amber" />
+              <StatCard label="মাস শেষে পাওনা" value={money(totals.receivable)} tone="sky" />
+              <StatCard label="মাস শেষে দেনা" value={money(totals.payable)} tone="rose" />
             </div>
           </Card>
 
@@ -201,7 +199,7 @@ function ReportsPage() {
             <div className="overflow-x-auto">
               <table className="w-full min-w-[560px] text-[12px]">
                 <thead>
-                  <tr className="border-b border-slate-200 text-left text-slate-500 dark:border-slate-800">
+                  <tr className="border-b border-line text-left text-dim">
                     <th className="py-2 pr-2 font-semibold">তারিখ</th>
                     <th className="py-2 pr-2 font-semibold">ধরন</th>
                     <th className="py-2 pr-2 font-semibold">পার্টি</th>
@@ -210,7 +208,7 @@ function ReportsPage() {
                     <th className="py-2 text-right font-semibold">লাভ</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                <tbody className="divide-y divide-line">
                   {rows.map((r: Invoice) => (
                     <tr key={r.id}>
                       <td className="py-1.5 pr-2 whitespace-nowrap">{bnDate(r.invoice_date)}</td>
@@ -219,17 +217,17 @@ function ReportsPage() {
                       <td className="py-1.5 pr-2 text-right font-semibold">
                         {money(r.total_amount)}
                       </td>
-                      <td className="py-1.5 pr-2 text-right text-rose-600">
+                      <td className="py-1.5 pr-2 text-right text-rose">
                         {num(r.due_amount) > 0 ? money(r.due_amount) : "—"}
                       </td>
-                      <td className="py-1.5 text-right text-violet-600">
+                      <td className="py-1.5 text-right text-violet">
                         {r.type === "sale" ? money(r.profit) : "—"}
                       </td>
                     </tr>
                   ))}
                   {rows.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="py-8 text-center text-slate-500">
+                      <td colSpan={6} className="py-8 text-center text-dim">
                         এই মাসে কোনো হিসাব নেই।
                       </td>
                     </tr>
@@ -247,10 +245,8 @@ function ReportsPage() {
 function Line({ label, value, bold }: { label: string; value: number; bold?: boolean }) {
   return (
     <div className={`flex items-center justify-between ${bold ? "font-bold" : ""}`}>
-      <span className="text-slate-600 dark:text-slate-400">{label}</span>
-      <span className={value < 0 ? "text-rose-600" : "text-slate-800 dark:text-slate-200"}>
-        {money(value)}
-      </span>
+      <span className="text-dim">{label}</span>
+      <span className={value < 0 ? "text-rose" : "text-ink"}>{money(value)}</span>
     </div>
   );
 }

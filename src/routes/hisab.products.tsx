@@ -91,33 +91,30 @@ function ProductsPage() {
                 key={p.id}
                 onClick={() => setEditing(p)}
                 className={cn(
-                  "flex w-full items-center gap-3 rounded-2xl border border-slate-200 bg-white p-3 text-left shadow-sm",
-                  "dark:border-slate-800 dark:bg-slate-900",
+                  "flex w-full items-center gap-3 rounded-2xl border border-line bg-card p-3 text-left shadow-sm",
                   !p.is_active && "opacity-55",
                 )}
               >
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-[14px] font-bold text-slate-800 dark:text-slate-200">
+                  <p className="truncate text-[14px] font-bold text-ink">
                     {p.name}
                     {!p.is_active ? <Chip className="ml-1.5">নিষ্ক্রিয়</Chip> : null}
                   </p>
-                  <p className="mt-0.5 text-[11px] text-slate-500">
+                  <p className="mt-0.5 text-[11px] text-dim">
                     {(categories.data ?? []).find((c) => c.id === p.category_id)?.name ??
                       "ক্যাটাগরি নেই"}{" "}
                     · {unitLabel(p.unit)}
                     {p.cost_price != null ? ` · ক্রয়মূল্য ${money(p.cost_price)}` : ""}
                   </p>
                   {p.cost_price == null ? (
-                    <p className="mt-0.5 text-[10px] font-semibold text-amber-600">
+                    <p className="mt-0.5 text-[10px] font-semibold text-amber">
                       ⚠️ ক্রয়মূল্য নেই — লাভের হিসাব ভুল হতে পারে
                     </p>
                   ) : null}
                 </div>
                 <div className="shrink-0 text-right">
-                  <p className="text-[14px] font-bold text-slate-800 dark:text-slate-200">
-                    {qtyText(s?.qty_on_hand ?? 0)}
-                  </p>
-                  <p className="text-[10px] text-slate-500">{money(s?.stock_value ?? 0)}</p>
+                  <p className="text-[14px] font-bold text-ink">{qtyText(s?.qty_on_hand ?? 0)}</p>
+                  <p className="text-[10px] text-dim">{money(s?.stock_value ?? 0)}</p>
                 </div>
               </button>
             );
@@ -176,11 +173,11 @@ function ProductForm({
   });
 
   return (
-    <Card className="space-y-3.5 border-blue-300 dark:border-blue-900">
+    <Card className="space-y-3.5 border-sky/40">
       <SectionTitle
         title={product ? "পণ্য সম্পাদনা" : "নতুন পণ্য"}
         right={
-          <button onClick={onClose} className="text-slate-400" aria-label="বন্ধ">
+          <button onClick={onClose} className="text-faint" aria-label="বন্ধ">
             <X className="h-4 w-4" />
           </button>
         }
@@ -250,7 +247,7 @@ function ProductForm({
       </Field>
 
       {!product ? (
-        <div className="grid grid-cols-2 gap-3 rounded-xl bg-slate-50 p-3 dark:bg-slate-800/60">
+        <div className="grid grid-cols-2 gap-3 rounded-xl bg-card-2 p-3">
           <Field label="ওপেনিং স্টক" hint="এখন হাতে কত আছে">
             <Input
               type="number"
@@ -274,12 +271,12 @@ function ProductForm({
           </Field>
         </div>
       ) : (
-        <label className="flex items-center gap-2.5 text-[13px] font-semibold text-slate-700 dark:text-slate-300">
+        <label className="flex items-center gap-2.5 text-[13px] font-semibold text-ink">
           <input
             type="checkbox"
             checked={form.is_active}
             onChange={(e) => setForm({ ...form, is_active: e.target.checked })}
-            className="h-4 w-4 accent-blue-600"
+            className="h-4 w-4 accent-brand"
           />
           সক্রিয় (নতুন হিসাবে বাছাই করা যাবে)
         </label>
@@ -297,11 +294,11 @@ function ProductForm({
       </Button>
 
       {!product ? (
-        <p className="text-[11px] text-slate-500">
+        <p className="text-[11px] text-dim">
           ওপেনিং স্টক দিলে একটা লট তৈরি হবে — FIFO হিসাবে সেটাই সবচেয়ে পুরনো মাল ধরা হবে।
         </p>
       ) : (
-        <p className="text-[11px] text-slate-500">
+        <p className="text-[11px] text-dim">
           পণ্য মোছা যায় না — ব্যবহার বন্ধ করতে নিষ্ক্রিয় করুন। পুরনো হিসাব অক্ষত থাকবে।
         </p>
       )}
@@ -355,7 +352,7 @@ function CategoryPanel({
       <ErrorNote>{error}</ErrorNote>
       <div className="flex flex-wrap gap-1.5">
         {categories.length === 0 ? (
-          <p className="text-[12px] text-slate-500">এখনো কোনো ক্যাটাগরি নেই।</p>
+          <p className="text-[12px] text-dim">এখনো কোনো ক্যাটাগরি নেই।</p>
         ) : (
           categories.map((c) => <Chip key={c.id}>{c.name}</Chip>)
         )}

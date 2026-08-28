@@ -69,7 +69,7 @@ function ListPage() {
     <div className="space-y-3">
       <div className="flex gap-2">
         <div className="relative flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-faint" />
           <Input
             value={text}
             onChange={(e) => setText(e.target.value)}
@@ -179,12 +179,12 @@ function ListPage() {
       ) : null}
 
       {rows.length ? (
-        <div className="flex items-center justify-between rounded-xl bg-slate-100 px-3 py-2 text-[12px] font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+        <div className="flex items-center justify-between rounded-xl bg-card-2 px-3 py-2 text-[12px] font-semibold text-dim">
           <span>{toBn(rows.length)} টি হিসাব</span>
           <span>
             মোট {money(totals.amount)}
             {totals.due > 0 ? (
-              <span className="ml-2 text-rose-600">বাকি {money(totals.due)}</span>
+              <span className="ml-2 text-rose">বাকি {money(totals.due)}</span>
             ) : null}
           </span>
         </div>
@@ -218,8 +218,7 @@ function InvoiceRow({ invoice: inv }: { invoice: Invoice }) {
       to="/hisab/invoice/$id"
       params={{ id: inv.id }}
       className={cn(
-        "flex items-stretch gap-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm transition active:scale-[0.99]",
-        "dark:border-slate-800 dark:bg-slate-900",
+        "flex items-stretch gap-3 rounded-2xl border border-line bg-card p-3 shadow-sm transition active:scale-[0.99]",
         cancelled && "opacity-60",
       )}
     >
@@ -239,10 +238,10 @@ function InvoiceRow({ invoice: inv }: { invoice: Invoice }) {
           {inv.stock_shortfall ? <Chip color="#dc2626">স্টক ঘাটতি</Chip> : null}
         </div>
 
-        <p className="mt-1 truncate text-[14px] font-bold text-slate-800 dark:text-slate-200">
+        <p className="mt-1 truncate text-[14px] font-bold text-ink">
           {inv.party_name || inv.details || "বিবরণ নেই"}
         </p>
-        <p className="mt-0.5 text-[11px] text-slate-500">
+        <p className="mt-0.5 text-[11px] text-dim">
           {bnDate(inv.invoice_date)} · {inv.created_by_name}
           {inv.memo_no ? ` · মেমো ${inv.memo_no}` : ""}
         </p>
@@ -253,12 +252,12 @@ function InvoiceRow({ invoice: inv }: { invoice: Invoice }) {
           {money(inv.total_amount)}
         </p>
         {num(inv.due_amount) > 0 ? (
-          <p className="text-[11px] font-semibold text-rose-600">বাকি {money(inv.due_amount)}</p>
+          <p className="text-[11px] font-semibold text-rose">বাকি {money(inv.due_amount)}</p>
         ) : (
-          <p className="text-[11px] text-emerald-600">চুকে গেছে</p>
+          <p className="text-[11px] text-mint">চুকে গেছে</p>
         )}
         {inv.type === "sale" && !inv.is_reversal ? (
-          <p className="text-[10px] text-violet-600">লাভ {money(inv.profit)}</p>
+          <p className="text-[10px] text-violet">লাভ {money(inv.profit)}</p>
         ) : null}
       </div>
     </Link>
@@ -282,7 +281,7 @@ function TypeChip({
       onClick={onClick}
       className={cn(
         "rounded-full px-3 py-1.5 text-[12px] font-bold transition",
-        active ? "text-white" : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300",
+        active ? "text-white" : "bg-card-2 text-dim",
       )}
       style={active ? { backgroundColor: color ?? "#132a6b" } : undefined}
     >
@@ -306,9 +305,7 @@ function ToggleChip({
       onClick={onClick}
       className={cn(
         "rounded-full border px-3 py-1.5 text-[12px] font-semibold transition",
-        active
-          ? "border-blue-600 bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300"
-          : "border-slate-200 text-slate-600 dark:border-slate-700 dark:text-slate-300",
+        active ? "border-brand bg-brand/12 text-brand" : "border-line text-dim",
       )}
     >
       {label}
